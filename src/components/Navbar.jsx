@@ -8,6 +8,7 @@ function Navbar() {
         <li><Link to="/programar" className="nav-link">PROGRAMAR</Link></li>
         <li><Link to="/reportar" className="nav-link">REPORTAR</Link></li>
         <li><Link to="/consultas" className="nav-link">CONSULTAS</Link></li>
+        <li><Link to="/gestion-casos" className="nav-link">GESTIÓN DE CASOS</Link></li>
       </ul>
     </nav>
   );

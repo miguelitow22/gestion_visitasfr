@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Consultas from './pages/Consultas';
 import Programar from './pages/Programar';
 import Reportar from './pages/Reportar';
+import GestionCasos from './pages/GestionCasos';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Header from './components/Header';
@@ -20,6 +21,7 @@ function App() {
         <Route path="/consultas" element={<Consultas />} />
         <Route path="/programar" element={<Programar />} />
         <Route path="/reportar" element={<Reportar />} />
+        <Route path="/gestion-casos" element={<GestionCasos />} />
       </Routes>
       <Footer />
     </Router>
