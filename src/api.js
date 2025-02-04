@@ -1,4 +1,5 @@
-const API_URL = "https://gestionvisitas-production.up.railway.app";  // ⚠️ Reemplaza con tu URL de producción
+const API_URL = "https://gestionvisitas-production.up.railway.app/api"; 
+
 
 // ✅ Obtener todos los casos
 export const obtenerCasos = async () => {
