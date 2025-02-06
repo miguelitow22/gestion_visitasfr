@@ -23,13 +23,13 @@ body {
 .container {
   width: 90%;
   max-width: 1300px;
-  margin: 80px auto;
+  margin: 120px auto; /* 🔹 Más espacio arriba y abajo */
   background: white;
-  padding: 50px;
+  padding: 60px;
   border-radius: 18px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-  flex-grow: 1;
 }
+
 
 /* ENCABEZADO */
 .header {
@@ -63,19 +63,22 @@ body {
 }
 
 .nav ul li a {
-  display: block;
-  padding: 18px 24px;
+  display: inline-block;
+  padding: 14px 20px;
   text-decoration: none;
   color: white;
   font-weight: bold;
-  background: #0056b3;
-  border-radius: 14px;
-  transition: background 0.3s ease-in-out, transform 0.2s;
+  background: #007bff;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .nav ul li a:hover {
   background-color: #00408a;
-  transform: scale(1.1);
+  border-color: #fff;
+  transform: translateY(-3px);
 }
 
 /* GESTIÓN DE CASOS */
@@ -118,12 +121,87 @@ body {
 .form-container {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 20px;
   padding: 30px;
-  background: #ffffff;
+  background: white;
   border-radius: 12px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-group label {
+  font-weight: bold;
+  color: #333;
+  font-size: 16px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 12px;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  font-size: 16px;
+  width: 100%;
+}
+
+.form-group select {
+  background: #f9f9f9;
+}
+
+.btn {
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-primary {
+  background: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #0056b3;
+}
+
+.btn-secondary {
+  background: #f1f1f1;
+  color: #222;
+}
+
+.btn-secondary:hover {
+  background: #ddd;
+}
+
+/* ✅ Botón para subir evidencia */
+.btn-evidencia {
+  background: #0782e6; /* Verde */
+  color: white;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-evidencia:hover {
+  background:   #043885;
+}
+
+
 
 .form-group label {
   font-weight: bold;
@@ -147,13 +225,50 @@ input, textarea {
   margin-top: auto;
 }
 
-/* ✅ Mejora en la presentación de la gestión de casos */
 .gestion-layout {
   display: flex;
+  flex-wrap: wrap;
   gap: 30px;
   justify-content: space-between;
   align-items: flex-start;
+  width: 100%;
 }
+
+.consulta-section, 
+.programar-section, 
+.reportar-section {
+  background: #fff;
+  padding: 40px; /* 🔹 Más espacio interno */
+  margin: 50px 0; /* 🔹 Más espacio entre secciones */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.consulta-section h3, 
+.programar-section h3, 
+.reportar-section h3 {
+  margin-bottom: 25px; /* 🔹 Más espacio debajo del título */
+  font-size: 26px; /* 🔹 Letra más grande para títulos */
+}
+
+.consulta-section p, 
+.programar-section p, 
+.reportar-section p {
+  font-size: 20px; /* 🔹 Letra más grande para los textos */
+  line-height: 2.2; /* 🔹 Más espacio entre líneas */
+  margin-bottom: 30px; /* 🔹 Más espacio debajo del párrafo */
+}
+
+.consulta-section .btn, 
+.programar-section .btn, 
+.reportar-section .btn {
+  margin-top: 20px; /* 🔹 Más espacio entre el texto y el botón */
+  padding: 18px 34px; /* 🔹 Botón más grande */
+  font-size: 20px; /* 🔹 Letra más grande en botones */
+}
+
+
 
 /* ✅ Panel de Creación de Casos */
 .panel-creacion {
@@ -161,7 +276,7 @@ input, textarea {
   padding: 25px;
   border-radius: 12px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  width: 45%;
+  width: 55%;
 }
 
 .panel-creacion h3 {
@@ -172,8 +287,10 @@ input, textarea {
 
 /* ✅ Panel de Casos Registrados */
 .panel-casos {
-  width: 50%;
+  width: 80%;
 }
+
+
 
 .casos-lista {
   display: grid;
@@ -203,19 +320,48 @@ input, textarea {
 
 /* ✅ Panel de Caso Seleccionado */
 .panel-seleccionado {
-  width: 45%;
   background: #f9f9f9;
-  padding: 25px;
-  border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  padding: opx;
+  border-radius: 12px;
+  box-shadow: 0 10px 58px rgba(0, 0, 0, 0.12);
   text-align: left;
+  width: 100%; /* 🔹 Aumentamos el ancho */
+  min-height: 600px; /* 🔹 Más altura para mejor visibilidad */
+  max-width: 1000px; /* 🔹 Evita que se haga demasiado grande en pantallas grandes */
+  margin: 0 auto; /* 🔹 Centra el panel en la pantalla */
 }
 
+.panel-seleccionado form {
+  width: 100%;
+  max-width: 950px; /* 🔹 Hace que los formularios sean más anchos */
+  margin: 0 auto; /* 🔹 Centra el formulario dentro del panel */
+}
+
+.panel-seleccionado input,
+.panel-seleccionado select,
+.panel-seleccionado textarea {
+  width: 100%; /* 🔹 Hace que ocupen todo el espacio disponible */
+  max-width: 900px; /* 🔹 Evita que sean demasiado anchos en pantallas grandes */
+  padding: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 18px;
+}
+
+.panel-seleccionado button {
+  width: 100%; /* 🔹 Asegura que los botones ocupen todo el ancho del formulario */
+  max-width: 900px;
+  padding: 16px;
+}
+
+
 .panel-seleccionado h3 {
+  font-size: 22px; /* 🔹 Aumentamos el tamaño del título */
   text-align: center;
   color: #0056b3;
   margin-bottom: 15px;
 }
+
 
 .panel-seleccionado p {
   font-size: 16px;
@@ -279,13 +425,13 @@ input, textarea {
 /* ✅ Responsividad */
 @media (max-width: 1024px) {
   .gestion-layout {
-      flex-direction: column;
+    flex-direction: column;
   }
-
+  
   .panel-casos,
   .panel-seleccionado,
   .panel-creacion {
-      width: 100%;
+    width: 100%;
   }
 }
 
@@ -296,12 +442,12 @@ input, textarea {
     width: 95%;
     padding: 35px;
   }
-
+  
   .nav ul {
     flex-direction: column;
     align-items: center;
   }
-
+  
   .nav ul li {
     width: 100%;
   }
@@ -309,15 +455,37 @@ input, textarea {
   .nav ul li a {
     padding: 16px;
   }
-
+  
   .btn {
     padding: 16px 24px;
     font-size: 18px;
   }
 }
 
-@media (min-width: 1024px) {
-  .container {
-    max-width: 1400px;
-  }
-}
+      /* 🖥️ En pantallas grandes, colocamos los casos y el formulario a la izquierda y el panel de actualización a la derecha */
+      @media (min-width: 1025px) {
+        .panel-creacion {
+          width: 48%;
+        }
+      
+        .panel-casos {
+          width: 48%;
+        }
+      
+        .panel-seleccionado {
+          width: 48%; /* 🔹 Se coloca a la derecha */
+        }
+      }
+      
+      /* 📱 En móviles, todo en columna */
+      @media (max-width: 1024px) {
+        .gestion-layout {
+          flex-direction: column;
+        }
+      
+        .panel-creacion,
+        .panel-casos,
+        .panel-seleccionado {
+          width: 100%;
+        }
+      }

@@ -5,27 +5,31 @@ function Programar() {
   const [calendarUrl, setCalendarUrl] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [calendarError, setCalendarError] = useState(false);
-  const googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSc_c_QPVfV0LyH5eLN85Ww8ZVkb2XNaDwsnU5Mz9EXq-eyFbw/viewform?embedded=true"; // URL del Google Forms
+  const googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSc_c_QPVfV0LyH5eLN85Ww8ZVkb2XNaDwsnU5Mz9EXq-eyFbw/viewform?embedded=true";
 
   useEffect(() => {
     async function fetchCalendarUrl() {
+      setIsLoading(true);
       try {
-        let { data, error } = await supabase.from("settings").select("calendar_url").single();
-        if (error) {
-          console.error("Error cargando el calendario:", error.message);
+        const { data, error } = await supabase.from("settings").select("calendar_url").single();
+
+        if (error || !data?.calendar_url) {
+          console.error("❌ Error cargando el calendario:", error?.message || "No se encontró un calendario en Supabase.");
           setCalendarError(true);
           return;
         }
+
         setCalendarUrl(data.calendar_url);
       } catch (error) {
-        console.error("Error inesperado cargando el calendario:", error.message);
+        console.error("❌ Error inesperado al cargar el calendario:", error.message);
         setCalendarError(true);
       } finally {
         setIsLoading(false);
       }
     }
-    fetchCalendarUrl();
-  }, []);
+
+    if (!calendarUrl) fetchCalendarUrl();
+  }, [calendarUrl]);
 
   return (
     <div className="container programar-container">
@@ -41,6 +45,7 @@ function Programar() {
         ) : (
           <iframe
             src={calendarUrl}
+            title="Calendario de Disponibilidad"
             style={{ border: 0, width: "100%", height: "400px" }}
             frameBorder="0"
             scrolling="no"
@@ -63,11 +68,11 @@ function Programar() {
         <p>Llena el siguiente formulario para registrar la programación de la visita.</p>
         <a
           href={googleFormUrl}
+          className="btn btn-primary"
           target="_blank"
           rel="noopener noreferrer"
-          className="btn-link"
         >
-          Abrir Formulario de Programación
+          Formato digital
         </a>
       </section>
     </div>
