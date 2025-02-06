@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: process.env.VITE_API_URL, // <--- Aquí podría estar el error
+        target: import.meta.env.VITE_API_URL,
         changeOrigin: true,
         secure: false,
       },
