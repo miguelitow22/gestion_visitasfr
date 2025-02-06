@@ -48,7 +48,7 @@ export async function crearCaso(datosCaso) {
             throw new Error("❌ El correo electrónico ingresado no es válido.");
         }
 
-        const response = await fetch(`${API_BASE_URL}/casos`, {
+        const response = await fetch(`${API_BASE_URL}/api/casos`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -83,7 +83,7 @@ export async function actualizarCaso(id, datos) {
         if (!id) throw new Error("❌ ID del caso no proporcionado.");
         if (!datos.estado) throw new Error("❌ Estado del caso no proporcionado.");
 
-        const response = await fetch(`${API_BASE_URL}/casos/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/casos/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -115,7 +115,7 @@ export async function subirEvidencia(id, archivo) {
         const formData = new FormData();
         formData.append("archivo", archivo);
 
-        const response = await fetch(`${API_BASE_URL}/casos/${id}/evidencia`, {
+        const response = await fetch(`${API_BASE_URL}/api/casos/${id}/evidencia`, {
             method: "POST",
             body: formData,
         });
