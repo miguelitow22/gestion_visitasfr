@@ -21,7 +21,7 @@ async function handleResponse(response) {
 // 🔹 Obtener todos los casos con manejo de errores mejorado
 export async function obtenerCasos() {
     try {
-        const response = await fetch(`${API_BASE_URL}/casos`, {
+        const response = await fetch(`${API_BASE_URL}/api/casos`, {
             method: "GET",
             headers: { "Accept": "application/json" },
             cache: "no-store",
