@@ -10,7 +10,7 @@ const Consultas = lazy(() => import('./pages/Consultas'));
 const Programar = lazy(() => import('./pages/Programar'));
 const Reportar = lazy(() => import('./pages/Reportar'));
 const GestionCasos = lazy(() => import('./pages/GestionCasos'));
-const NotFound = lazy(() => import('./pages/NotFound')); // Nueva página de error
+
 
 function App() {
   return (
@@ -24,7 +24,6 @@ function App() {
           <Route path="/programar" element={<Programar />} />
           <Route path="/reportar" element={<Reportar />} />
           <Route path="/gestion-casos" element={<GestionCasos />} />
-          <Route path="*" element={<NotFound />} /> {/* Ruta para errores 404 */}
         </Routes>
       </Suspense>
       <Footer />
