@@ -268,6 +268,23 @@ input, textarea {
   font-size: 20px; /* 🔹 Letra más grande en botones */
 }
 
+.btn-consulta {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.btn-consulta:hover {
+  background-color: #0056b3;
+}
+
+
 
 
 /* ✅ Panel de Creación de Casos */
