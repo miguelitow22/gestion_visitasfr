@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: process.env.VITE_API_URL || "https://gestionvisitas-production.up.railway.app", // ✅ Backend en Railway
+        target: import.meta.env.VITE_API_URL || "https://gestionvisitas-production.up.railway.app", // ✅ Backend en Railway
         changeOrigin: true,
         secure: process.env.NODE_ENV === "production", // ✅ Solo HTTPS en producción
         ws: true, // Habilita WebSockets si es necesario
@@ -24,7 +24,4 @@ export default defineConfig({
   preview: {
     port: 5000, // ✅ Define puerto específico para vista previa de producción
   },
-  define: {
-    'process.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || "https://gestionvisitas-production.up.railway.app")
-  }
 });
