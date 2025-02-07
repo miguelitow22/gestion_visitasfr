@@ -8,7 +8,7 @@ export default defineConfig({
       '/api': {
         target: import.meta.env.VITE_API_URL || "https://gestionvisitas-production.up.railway.app", // ✅ Backend en Railway
         changeOrigin: true,
-        secure: process.env.NODE_ENV === "production", // ✅ Solo HTTPS en producción
+        secure: import.meta.env.MODE === "production", // ✅ Solo HTTPS en producción
         ws: true, // Habilita WebSockets si es necesario
       },
     },
