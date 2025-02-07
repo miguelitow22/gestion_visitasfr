@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       target: 'esnext', // ✅ Optimiza para navegadores modernos
-      minify: 'terser', // Usa Terser para mejor compresión
+      minify: 'esbuild', // Usa Terser para mejor compresión
       sourcemap: false, // ❌ Evita exponer el código fuente en producción
     },
     preview: {
