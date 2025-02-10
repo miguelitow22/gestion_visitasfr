@@ -41,7 +41,7 @@ body {
 }
 
 .logo-container img {
-  max-width: 125px; /* Limita el ancho */
+  max-width: 150px; /* Limita el ancho */
   height: auto; /* Mantiene la proporción */
   object-fit: contain; /* Evita distorsión */
 }
