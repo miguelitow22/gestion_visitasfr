@@ -41,10 +41,11 @@ body {
 }
 
 .logo-container img {
-  max-width: 150px;
-  display: block;
-  margin: 0 auto;
+  max-width: 125px; /* Limita el ancho */
+  height: auto; /* Mantiene la proporción */
+  object-fit: contain; /* Evita distorsión */
 }
+
 
 /* MENÚ DE NAVEGACIÓN */
 .nav {
