@@ -534,7 +534,7 @@ textarea {
 /* Ajustar el logo en móviles */
 @media (max-width: 768px) {
   .logo-container img {
-    max-width: 100px;
+    max-width: 200px;
     /* Ajusta el tamaño del logo */
     height: auto;
     /* Mantiene la proporción */
