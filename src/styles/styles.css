@@ -23,7 +23,8 @@ body {
 .container {
   width: 90%;
   max-width: 1300px;
-  margin: 120px auto; /* 🔹 Más espacio arriba y abajo */
+  margin: 120px auto;
+  /* 🔹 Más espacio arriba y abajo */
   background: white;
   padding: 60px;
   border-radius: 18px;
@@ -186,7 +187,8 @@ body {
 
 /* ✅ Botón para subir evidencia */
 .btn-evidencia {
-  background: #0782e6; /* Verde */
+  background: #0782e6;
+  /* Verde */
   color: white;
   padding: 14px 24px;
   font-size: 16px;
@@ -198,7 +200,7 @@ body {
 }
 
 .btn-evidencia:hover {
-  background:   #043885;
+  background: #043885;
 }
 
 
@@ -208,7 +210,8 @@ body {
   margin-bottom: 12px;
 }
 
-input, textarea {
+input,
+textarea {
   padding: 16px;
   border: 1px solid #bbb;
   border-radius: 10px;
@@ -234,38 +237,48 @@ input, textarea {
   width: 100%;
 }
 
-.consulta-section, 
-.programar-section, 
+.consulta-section,
+.programar-section,
 .reportar-section {
   background: #fff;
-  padding: 40px; /* 🔹 Más espacio interno */
-  margin: 50px 0; /* 🔹 Más espacio entre secciones */
+  padding: 40px;
+  /* 🔹 Más espacio interno */
+  margin: 50px 0;
+  /* 🔹 Más espacio entre secciones */
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
-.consulta-section h3, 
-.programar-section h3, 
+.consulta-section h3,
+.programar-section h3,
 .reportar-section h3 {
-  margin-bottom: 25px; /* 🔹 Más espacio debajo del título */
-  font-size: 26px; /* 🔹 Letra más grande para títulos */
+  margin-bottom: 25px;
+  /* 🔹 Más espacio debajo del título */
+  font-size: 26px;
+  /* 🔹 Letra más grande para títulos */
 }
 
-.consulta-section p, 
-.programar-section p, 
+.consulta-section p,
+.programar-section p,
 .reportar-section p {
-  font-size: 20px; /* 🔹 Letra más grande para los textos */
-  line-height: 2.2; /* 🔹 Más espacio entre líneas */
-  margin-bottom: 30px; /* 🔹 Más espacio debajo del párrafo */
+  font-size: 20px;
+  /* 🔹 Letra más grande para los textos */
+  line-height: 2.2;
+  /* 🔹 Más espacio entre líneas */
+  margin-bottom: 30px;
+  /* 🔹 Más espacio debajo del párrafo */
 }
 
-.consulta-section .btn, 
-.programar-section .btn, 
+.consulta-section .btn,
+.programar-section .btn,
 .reportar-section .btn {
-  margin-top: 20px; /* 🔹 Más espacio entre el texto y el botón */
-  padding: 18px 34px; /* 🔹 Botón más grande */
-  font-size: 20px; /* 🔹 Letra más grande en botones */
+  margin-top: 20px;
+  /* 🔹 Más espacio entre el texto y el botón */
+  padding: 18px 34px;
+  /* 🔹 Botón más grande */
+  font-size: 20px;
+  /* 🔹 Letra más grande en botones */
 }
 
 .btn-consulta {
@@ -342,23 +355,31 @@ input, textarea {
   border-radius: 12px;
   box-shadow: 0 10px 58px rgba(0, 0, 0, 0.12);
   text-align: left;
-  width: 100%; /* 🔹 Aumentamos el ancho */
-  min-height: 600px; /* 🔹 Más altura para mejor visibilidad */
-  max-width: 1000px; /* 🔹 Evita que se haga demasiado grande en pantallas grandes */
-  margin: 0 auto; /* 🔹 Centra el panel en la pantalla */
+  width: 100%;
+  /* 🔹 Aumentamos el ancho */
+  min-height: 600px;
+  /* 🔹 Más altura para mejor visibilidad */
+  max-width: 1000px;
+  /* 🔹 Evita que se haga demasiado grande en pantallas grandes */
+  margin: 0 auto;
+  /* 🔹 Centra el panel en la pantalla */
 }
 
 .panel-seleccionado form {
   width: 100%;
-  max-width: 950px; /* 🔹 Hace que los formularios sean más anchos */
-  margin: 0 auto; /* 🔹 Centra el formulario dentro del panel */
+  max-width: 950px;
+  /* 🔹 Hace que los formularios sean más anchos */
+  margin: 0 auto;
+  /* 🔹 Centra el formulario dentro del panel */
 }
 
 .panel-seleccionado input,
 .panel-seleccionado select,
 .panel-seleccionado textarea {
-  width: 100%; /* 🔹 Hace que ocupen todo el espacio disponible */
-  max-width: 900px; /* 🔹 Evita que sean demasiado anchos en pantallas grandes */
+  width: 100%;
+  /* 🔹 Hace que ocupen todo el espacio disponible */
+  max-width: 900px;
+  /* 🔹 Evita que sean demasiado anchos en pantallas grandes */
   padding: 14px;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -366,14 +387,16 @@ input, textarea {
 }
 
 .panel-seleccionado button {
-  width: 100%; /* 🔹 Asegura que los botones ocupen todo el ancho del formulario */
+  width: 100%;
+  /* 🔹 Asegura que los botones ocupen todo el ancho del formulario */
   max-width: 900px;
   padding: 16px;
 }
 
 
 .panel-seleccionado h3 {
-  font-size: 22px; /* 🔹 Aumentamos el tamaño del título */
+  font-size: 22px;
+  /* 🔹 Aumentamos el tamaño del título */
   text-align: center;
   color: #0056b3;
   margin-bottom: 15px;
@@ -444,7 +467,7 @@ input, textarea {
   .gestion-layout {
     flex-direction: column;
   }
-  
+
   .panel-casos,
   .panel-seleccionado,
   .panel-creacion {
@@ -459,12 +482,12 @@ input, textarea {
     width: 95%;
     padding: 35px;
   }
-  
+
   .nav ul {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .nav ul li {
     width: 100%;
   }
@@ -472,37 +495,48 @@ input, textarea {
   .nav ul li a {
     padding: 16px;
   }
-  
+
   .btn {
     padding: 16px 24px;
     font-size: 18px;
   }
 }
 
-      /* 🖥️ En pantallas grandes, colocamos los casos y el formulario a la izquierda y el panel de actualización a la derecha */
-      @media (min-width: 1025px) {
-        .panel-creacion {
-          width: 48%;
-        }
-      
-        .panel-casos {
-          width: 48%;
-        }
-      
-        .panel-seleccionado {
-          width: 48%; /* 🔹 Se coloca a la derecha */
-        }
-      }
-      
-      /* 📱 En móviles, todo en columna */
-      @media (max-width: 1024px) {
-        .gestion-layout {
-          flex-direction: column;
-        }
-      
-        .panel-creacion,
-        .panel-casos,
-        .panel-seleccionado {
-          width: 100%;
-        }
-      }
+/* 🖥️ En pantallas grandes, colocamos los casos y el formulario a la izquierda y el panel de actualización a la derecha */
+@media (min-width: 1025px) {
+  .panel-creacion {
+    width: 48%;
+  }
+
+  .panel-casos {
+    width: 48%;
+  }
+
+  .panel-seleccionado {
+    width: 48%;
+    /* 🔹 Se coloca a la derecha */
+  }
+}
+
+/* 📱 En móviles, todo en columna */
+@media (max-width: 1024px) {
+  .gestion-layout {
+    flex-direction: column;
+  }
+
+  .panel-creacion,
+  .panel-casos,
+  .panel-seleccionado {
+    width: 100%;
+  }
+}
+
+/* Ajustar el logo en móviles */
+@media (max-width: 768px) {
+  .logo-container img {
+    max-width: 100px;
+    /* Ajusta el tamaño del logo */
+    height: auto;
+    /* Mantiene la proporción */
+  }
+}
