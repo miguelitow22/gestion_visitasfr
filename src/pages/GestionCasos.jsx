@@ -9,7 +9,7 @@ function GestionCasos() {
     const [intentosContacto, setIntentosContacto] = useState(0);
     const [evidencia, setEvidencia] = useState(null);
     const [paginaActual, setPaginaActual] = useState(1);
-    const casosPorPagina = 3;
+    const casosPorPagina = 4;
 
     useEffect(() => {
         async function fetchData() {
