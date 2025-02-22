@@ -462,6 +462,48 @@ textarea {
   background: #ddd;
 }
 
+/* Contenedor para dividir los paneles */
+.panel-detalles-actualizacion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+  margin-top: 40px;
+}
+
+/* Panel de Detalles del Caso */
+.panel-detalles {
+  width: 48%;
+  background: #f9f9f9;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+/* Panel de Actualización */
+.panel-actualizacion {
+  width: 48%;
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+/* Responsividad: En pantallas pequeñas, los paneles irán uno debajo del otro */
+@media (max-width: 1024px) {
+  .panel-detalles-actualizacion {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .panel-detalles, 
+  .panel-actualizacion {
+    width: 100%;
+  }
+}
+
 /* ✅ Responsividad */
 @media (max-width: 1024px) {
   .panel-casos,
