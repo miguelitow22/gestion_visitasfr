@@ -1,4 +1,3 @@
-// GestionCasos.jsx - Eliminamos formulario de creación de casos
 import { useState, useEffect } from "react";
 import { obtenerCasos, actualizarCaso, subirEvidencia } from "../api";
 
