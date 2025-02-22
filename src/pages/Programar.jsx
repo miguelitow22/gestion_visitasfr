@@ -7,8 +7,8 @@ function Programar() {
   const [isLoading, setIsLoading] = useState(true);
   const [calendarError, setCalendarError] = useState(false);
 
-  const [casoId, setCasoId] = useState(uuidv4());
-  const [solicitud, setSolicitud] = useState("");
+  const [casoId] = useState(uuidv4());
+  const [solicitudAtlas, setSolicitudAtlas] = useState("");
   const [programador, setProgramador] = useState("HENRY MEDINA");
   const [nombre, setNombre] = useState("");
   const [documento, setDocumento] = useState("");
@@ -18,15 +18,17 @@ function Programar() {
   const [telefonoSecundario, setTelefonoSecundario] = useState("");
   const [telefonoTerciario, setTelefonoTerciario] = useState("");
   const [email, setEmail] = useState("");
-  const [seContacto, setSeContacto] = useState("No");
+  const [seContacto, setSeContacto] = useState("");
   const [tipoVisita, setTipoVisita] = useState("Ingreso");
-  const [intento, setIntento] = useState("1");
+  const [intentoContacto, setIntentoContacto] = useState("1");
+  const [motivoNoContacto, setMotivoNoContacto] = useState("");
   const [fecha, setFecha] = useState("");
-  const [analista, setAnalista] = useState("");
   const [hora, setHora] = useState("");
-  const [recontactar, setRecontactar] = useState("Sí");
   const [direccion, setDireccion] = useState("");
   const [puntoReferencia, setPuntoReferencia] = useState("");
+  const [evaluador, setEvaluador] = useState("");
+  const [analista, setAnalista] = useState("");
+  const [recontactar, setRecontactar] = useState("Sí");
 
   useEffect(() => {
     async function fetchCalendarUrl() {
@@ -52,7 +54,7 @@ function Programar() {
 
     const nuevoCaso = {
       casoId,
-      solicitud,
+      solicitudAtlas,
       programador,
       nombre,
       documento,
@@ -63,21 +65,20 @@ function Programar() {
       telefonoTerciario,
       email,
       seContacto,
-      tipoVisita,
-      intento,
+      tipoVisita: seContacto === "Sí" ? tipoVisita : "No aplica",
+      intentoContacto: seContacto === "No" ? intentoContacto : "No aplica",
+      motivoNoContacto: seContacto === "No" ? motivoNoContacto : "No aplica",
       fecha,
-      analista,
       hora,
-      recontactar,
       direccion,
       puntoReferencia,
+      evaluador,
+      analista,
+      recontactar,
     };
 
     console.log("Caso Programado:", nuevoCaso);
     alert("Visita programada con éxito");
-
-    // Generar un nuevo ID después de cada envío
-    setCasoId(uuidv4());
   };
 
   return (
@@ -103,8 +104,8 @@ function Programar() {
       <section className="programar-section">
         <h3>Programación</h3>
         <form className="form-container" onSubmit={handleSubmit}>
-          <label>Solicitud (ID Atlas):</label>
-          <input type="text" value={solicitud} onChange={(e) => setSolicitud(e.target.value)} required />
+          <label>ID Atlas (Solicitud):</label>
+          <input type="text" value={solicitudAtlas} onChange={(e) => setSolicitudAtlas(e.target.value)} required />
 
           <label>Programador:</label>
           <select value={programador} onChange={(e) => setProgramador(e.target.value)}>
@@ -115,10 +116,10 @@ function Programar() {
             <option value="JOHANA RODRÍGUEZ">JOHANA RODRÍGUEZ</option>
           </select>
 
-          <label>Nombre del Evaluado:</label>
+          <label>Nombre:</label>
           <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
 
-          <label>Documento del Evaluado:</label>
+          <label>Documento:</label>
           <input type="text" value={documento} onChange={(e) => setDocumento(e.target.value)} required />
 
           <label>Cliente:</label>
@@ -136,53 +137,57 @@ function Programar() {
           <label>Teléfono Terciario:</label>
           <input type="tel" value={telefonoTerciario} onChange={(e) => setTelefonoTerciario(e.target.value)} />
 
-          <label>Correo Electrónico:</label>
+          <label>Email:</label>
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-
-          <label>Intento de contacto:</label>
-          <select value={intento} onChange={(e) => setIntento(e.target.value)}>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-          </select>
-
-          <label>Tipo de Visita:</label>
-          <select value={tipoVisita} onChange={(e) => setTipoVisita(e.target.value)}>
-            <option value="Ingreso">Ingreso</option>
-            <option value="Seguimiento">Seguimiento</option>
-            <option value="Ingreso Bicicletas HA">Ingreso Bicicletas HA</option>
-            <option value="Seguimiento Bicicletas HA">Seguimiento Bicicletas HA</option>
-            <option value="Atlas">Atlas</option>
-            <option value="Pic Colombia">Pic Colombia</option>
-          </select>
-
-          <label>Fecha de Programación:</label>
-          <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} required />
-
-          <label>Hora:</label>
-          <input type="time" value={hora} onChange={(e) => setHora(e.target.value)} required />
 
           <label>¿Se contactó al evaluado?</label>
           <select value={seContacto} onChange={(e) => setSeContacto(e.target.value)}>
+            <option value="">Seleccione...</option>
             <option value="Sí">Sí</option>
             <option value="No">No</option>
           </select>
 
-          <label>¿Se volverá a contactar?</label>
-          <select value={recontactar} onChange={(e) => setRecontactar(e.target.value)}>
-            <option value="Sí">Sí</option>
-            <option value="No">No</option>
-          </select>
-
-          <label>Dirección:</label>
-          <input type="text" value={direccion} onChange={(e) => setDireccion(e.target.value)} required />
-
-          <label>Punto de Referencia:</label>
-          <input type="text" value={puntoReferencia} onChange={(e) => setPuntoReferencia(e.target.value)} />
-
-          <label>Analista:</label>
-          <input type="text" value={analista} onChange={(e) => setAnalista(e.target.value)} required />
-
+          {seContacto === "Sí" ? (
+            <>
+              <label>Tipo de Visita:</label>
+              <select value={tipoVisita} onChange={(e) => setTipoVisita(e.target.value)}>
+                <option value="Ingreso">Ingreso</option>
+                <option value="Seguimiento">Seguimiento</option>
+                <option value="Ingreso Bicicletas HA">Ingreso Bicicletas HA</option>
+                <option value="Seguimiento Bicicletas HA">Seguimiento Bicicletas HA</option>
+                <option value="Atlas">Atlas</option>
+                <option value="Pic Colombia">Pic Colombia</option>
+              </select>
+              <label>Fecha:</label>
+              <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} required />
+              <label>Hora:</label>
+              <input type="time" value={hora} onChange={(e) => setHora(e.target.value)} required />
+              <label>Dirección:</label>
+              <input type="text" value={direccion} onChange={(e) => setDireccion(e.target.value)} required />
+              <label>Punto de Referencia:</label>
+              <input type="text" value={puntoReferencia} onChange={(e) => setPuntoReferencia(e.target.value)} />
+              <label>Evaluador:</label>
+              <input type="text" value={evaluador} onChange={(e) => setEvaluador(e.target.value)} required />
+            </>
+          ) : (
+            <>
+              <label>Intento de contacto:</label>
+              <select value={intentoContacto} onChange={(e) => setIntentoContacto(e.target.value)}>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+              </select>
+              <label>Motivo de No Contacto:</label>
+              <input type="text" value={motivoNoContacto} onChange={(e) => setMotivoNoContacto(e.target.value)} />
+              <label>Analista:</label>
+              <input type="text" value={analista} onChange={(e) => setAnalista(e.target.value)} required />
+              <label>¿Se volverá a contactar?</label>
+              <select value={recontactar} onChange={(e) => setRecontactar(e.target.value)}>
+                <option value="Sí">Sí</option>
+                <option value="No">No</option>
+              </select>
+            </>
+          )}
           <button type="submit" className="btn btn-primary">Programar Visita</button>
         </form>
       </section>
