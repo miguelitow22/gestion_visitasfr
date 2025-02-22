@@ -75,7 +75,6 @@ function GestionCasos() {
                     {casosPaginados.map((caso) => (
                         <div key={caso.id} className={`caso-item ${casoSeleccionado?.id === caso.id ? "seleccionado" : ""}`}
                             onClick={() => handleSeleccionarCaso(caso)}>
-                            <p><strong>ID:</strong> {caso.id}</p>
                             <p><strong>Nombre:</strong> {caso.nombre}</p>
                             <p><strong>Estado:</strong> {caso.estado}</p>
                         </div>
@@ -92,7 +91,6 @@ function GestionCasos() {
                         {/* Panel de Detalles */}
                         <div className="panel-detalles">
                             <h3>Detalles del Caso Seleccionado</h3>
-                            <p><strong>ID:</strong> {casoSeleccionado.id}</p>
                             <p><strong>Nombre:</strong> {casoSeleccionado.nombre}</p>
                             <p><strong>Teléfono:</strong> {casoSeleccionado.telefono}</p>
                             <p><strong>Email:</strong> {casoSeleccionado.email}</p>
