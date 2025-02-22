@@ -88,35 +88,44 @@ function GestionCasos() {
                     <button onClick={() => setPaginaActual(paginaActual + 1)} disabled={indiceFinal >= casos.length}>Siguiente</button>
                 </div>
                 {casoSeleccionado && (
-                    <div className="panel-seleccionado">
-                        <h3>Detalles del Caso Seleccionado</h3>
-                        <p><strong>ID:</strong> {casoSeleccionado.id}</p>
-                        <p><strong>Nombre:</strong> {casoSeleccionado.nombre}</p>
-                        <p><strong>Teléfono:</strong> {casoSeleccionado.telefono}</p>
-                        <p><strong>Email:</strong> {casoSeleccionado.email}</p>
-                        <p><strong>Estado:</strong> {casoSeleccionado.estado}</p>
-                        <p><strong>Intentos de Contacto:</strong> {casoSeleccionado.intentos_contacto}</p>
-                        <h3>Subir Evidencia</h3>
-                        <input type="file" onChange={(e) => setEvidencia(e.target.files[0])} />
-                        <button onClick={handleEvidenciaUpload} className="btn btn-evidencia">Subir Evidencia</button>
-                        {casoSeleccionado?.evidencia_url && (
-                            <p>📂 <a href={casoSeleccionado.evidencia_url} target="_blank" rel="noopener noreferrer">Ver Evidencia</a></p>
-                        )}
-                        <h3>Actualizar Caso</h3>
-                        <form onSubmit={handleActualizarCaso} className="form-container">
-                            <label>Estado</label>
-                            <select value={estado} onChange={(e) => setEstado(e.target.value)}>
-                                <option value="pendiente">Pendiente</option>
-                                <option value="en curso">En Curso</option>
-                                <option value="completado">Completado</option>
-                                <option value="standby">Standby</option>
-                            </select>
-                            <label>Intentos de Contacto</label>
-                            <input type="number" value={intentosContacto} onChange={(e) => setIntentosContacto(e.target.value)} />
-                            <button type="submit" className="btn btn-primary">Actualizar Caso</button>
-                        </form>
+                    <div className="panel-detalles-actualizacion">
+
+                        {/* Panel de Detalles */}
+                        <div className="panel-detalles">
+                            <h3>Detalles del Caso Seleccionado</h3>
+                            <p><strong>ID:</strong> {casoSeleccionado.id}</p>
+                            <p><strong>Nombre:</strong> {casoSeleccionado.nombre}</p>
+                            <p><strong>Teléfono:</strong> {casoSeleccionado.telefono}</p>
+                            <p><strong>Email:</strong> {casoSeleccionado.email}</p>
+                            <p><strong>Estado:</strong> {casoSeleccionado.estado}</p>
+                            <p><strong>Intentos de Contacto:</strong> {casoSeleccionado.intentos_contacto}</p>
+
+                            <h3>Subir Evidencia</h3>
+                            <input type="file" onChange={(e) => setEvidencia(e.target.files[0])} />
+                            <button onClick={handleEvidenciaUpload} className="btn btn-evidencia">Subir Evidencia</button>
+                            {casoSeleccionado?.evidencia_url && (
+                                <p>📂 <a href={casoSeleccionado.evidencia_url} target="_blank" rel="noopener noreferrer">Ver Evidencia</a></p>
+                            )}
+                        </div>
+                        {/* Panel de Actualización */}
+                        <div className="panel-actualizacion">
+                            <h3>Actualizar Caso</h3>
+                            <form onSubmit={handleActualizarCaso} className="form-container">
+                                <label>Estado</label>
+                                <select value={estado} onChange={(e) => setEstado(e.target.value)}>
+                                    <option value="pendiente">Pendiente</option>
+                                    <option value="en curso">En Curso</option>
+                                    <option value="completado">Completado</option>
+                                    <option value="standby">Standby</option>
+                                </select>
+                                <label>Intentos de Contacto</label>
+                                <input type="number" value={intentosContacto} onChange={(e) => setIntentosContacto(e.target.value)} />
+                                <button type="submit" className="btn btn-primary">Actualizar Caso</button>
+                            </form>
+                        </div>
                     </div>
                 )}
+
             </div>
         </div>
     );
