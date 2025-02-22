@@ -21,14 +21,16 @@ body {
 
 /* Contenedor general */
 .container {
-  width: 90%;
-  max-width: 1300px;
-  margin: 120px auto;
-  /* 🔹 Más espacio arriba y abajo */
+  width: 100%;
+  max-width: 1400px;
+  margin: 80px auto;
   background: white;
-  padding: 60px;
+  padding: 50px;
   border-radius: 18px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 
@@ -86,21 +88,24 @@ body {
 /* GESTIÓN DE CASOS */
 .casos-lista {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 25px;
   justify-content: center;
   padding: 30px;
 }
 
+
 .caso-item {
   background: white;
-  padding: 25px;
+  padding: 30px;
   border-radius: 12px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
   text-align: center;
   transition: transform 0.3s ease-in-out, box-shadow 0.3s;
   border-left: 6px solid #007bff;
+  cursor: pointer;
 }
+
 
 .caso-item:hover {
   transform: scale(1.07);
@@ -349,22 +354,16 @@ textarea {
   background: #eef7ff;
 }
 
-/* ✅ Panel de Caso Seleccionado */
 .panel-seleccionado {
+  width: 100%;
+  max-width: 1000px;
   background: #f9f9f9;
-  padding: opx;
+  padding: 40px;
   border-radius: 12px;
   box-shadow: 0 10px 58px rgba(0, 0, 0, 0.12);
-  text-align: left;
-  width: 100%;
-  /* 🔹 Aumentamos el ancho */
-  min-height: 600px;
-  /* 🔹 Más altura para mejor visibilidad */
-  max-width: 1000px;
-  /* 🔹 Evita que se haga demasiado grande en pantallas grandes */
-  margin: 0 auto;
-  /* 🔹 Centra el panel en la pantalla */
+  margin-top: 40px;
 }
+
 
 .panel-seleccionado form {
   width: 100%;
@@ -465,16 +464,12 @@ textarea {
 
 /* ✅ Responsividad */
 @media (max-width: 1024px) {
-  .gestion-layout {
-    flex-direction: column;
-  }
-
   .panel-casos,
-  .panel-seleccionado,
-  .panel-creacion {
+  .panel-seleccionado {
     width: 100%;
   }
 }
+
 
 
 /* RESPONSIVIDAD */
