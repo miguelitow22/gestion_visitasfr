@@ -34,13 +34,17 @@ function Programar() {
     async function fetchCalendarUrl() {
       setIsLoading(true);
       try {
-        const data = await obtenerCalendarUrl();
-        if (!data || !data.calendar_url) {
-          setCalendarError(true);
-          return;
+        const response = await fetch("http://localhost:5000/api/calendar-url");  // Reemplaza con la URL correcta
+        if (!response.ok) throw new Error("❌ Error HTTP " + response.status + ": Respuesta no válida");
+
+        const data = await response.json();
+        if (data?.calendarUrl) {
+          setCalendarUrl(data.calendarUrl);
+        } else {
+          throw new Error("No se encontró la URL del calendario");
         }
-        setCalendarUrl(data.calendar_url);
       } catch (error) {
+        console.error("❌ Error en obtenerCalendarUrl:", error);
         setCalendarError(true);
       } finally {
         setIsLoading(false);
@@ -48,6 +52,7 @@ function Programar() {
     }
     fetchCalendarUrl();
   }, []);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
