@@ -71,7 +71,7 @@ function Programar() {
       return "";
     }
 
-    const baseUrl = "https://calendar.google.com/calendar/embed?src=cfe64a7e73e580180b6468e279686fb93434cf46a21de723b51dde3ef5a9bc96%40group.calendar.google.com&ctz=America%2FBogota";
+    const baseUrl = "https://calendar.google.com/calendar/render?action=TEMPLATE";
     const title = encodeURIComponent(`Visita Domiciliaria - Evaluador: ${evaluador}`);
     const details = encodeURIComponent(`Tipo de visita: ${tipoVisita}\nEvaluador: ${evaluador}`);
     const location = encodeURIComponent(direccion);
@@ -79,11 +79,14 @@ function Programar() {
     // Formato de fecha/hora para Google Calendar (YYYYMMDDTHHMMSSZ)
     const [horaInicio, minutos] = hora.split(":");
     const horaFin = (parseInt(horaInicio) + 1) % 24;
-    const startTime = `${fecha.toISOString().split("T")[0].replace(/-/g, "")}T${horaInicio}${minutos}00`;
-    const endTime = `${fecha.toISOString().split("T")[0].replace(/-/g, "")}T${horaFin.toString().padStart(2, "0")}${minutos}00`;
+    const formattedDate = fecha.toISOString().split("T")[0].replace(/-/g, "");
+
+    const startTime = `${formattedDate}T${horaInicio}${minutos}00`;
+    const endTime = `${formattedDate}T${horaFin.toString().padStart(2, "0")}${minutos}00`;
 
     return `${baseUrl}&text=${title}&details=${details}&location=${location}&dates=${startTime}/${endTime}`;
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
