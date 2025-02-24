@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { obtenerCalendarUrl } from "../api";
+import supabase from "../config/supabaseClient";
 import { v4 as uuidv4 } from "uuid";
 
 function Programar() {
@@ -34,26 +34,40 @@ function Programar() {
     async function fetchCalendarUrl() {
       setIsLoading(true);
       try {
-        const response = await fetch("http://localhost:5000/api/calendar-url");  // Reemplaza con la URL correcta
-        if (!response.ok) throw new Error("❌ Error HTTP " + response.status + ": Respuesta no válida");
-
-        const data = await response.json();
-        if (data?.calendarUrl) {
-          setCalendarUrl(data.calendarUrl);
-        } else {
-          throw new Error("No se encontró la URL del calendario");
+        const { data, error } = await supabase.from("settings").select("calendar_url").single();
+        if (error || !data?.calendar_url) {
+          setCalendarError(true);
+          return;
         }
+        setCalendarUrl(data.calendar_url);
       } catch (error) {
-        console.error("❌ Error en obtenerCalendarUrl:", error);
         setCalendarError(true);
       } finally {
         setIsLoading(false);
       }
     }
-    fetchCalendarUrl();
-  }, []);
-
-
+    if (!calendarUrl) fetchCalendarUrl();
+  }, [calendarUrl]);
+  const generarEnlaceGoogleCalendar = () => {
+    if (!fecha || !hora || !direccion || !evaluador || !tipoVisita) {
+      alert("Faltan datos obligatorios para agregar al calendario.");
+      return "";
+    }
+  
+    const baseUrl = "https://calendar.google.com/calendar/embed?src=cfe64a7e73e580180b6468e279686fb93434cf46a21de723b51dde3ef5a9bc96%40group.calendar.google.com&ctz=America%2FBogota";
+    const title = encodeURIComponent(`Visita Domiciliaria - Evaluador: ${evaluador}`);
+    const details = encodeURIComponent(`Tipo de visita: ${tipoVisita}\nEvaluador: ${evaluador}`);
+    const location = encodeURIComponent(direccion);
+  
+    // Formato de fecha/hora para Google Calendar (YYYYMMDDTHHMMSSZ)
+    const [horaInicio, minutos] = hora.split(":");
+    const horaFin = (parseInt(horaInicio) + 1) % 24;
+    const startTime = `${fecha.replace(/-/g, "")}T${horaInicio}${minutos}00`;
+    const endTime = `${fecha.replace(/-/g, "")}T${horaFin.toString().padStart(2, "0")}${minutos}00`;
+  
+    return `${baseUrl}&text=${title}&details=${details}&location=${location}&dates=${startTime}/${endTime}`;
+  };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -84,26 +98,6 @@ function Programar() {
 
     console.log("Caso Programado:", nuevoCaso);
     alert("Visita programada con éxito");
-  };
-
-  const generarEnlaceGoogleCalendar = () => {
-    if (!fecha || !hora || !direccion || !evaluador || !tipoVisita) {
-      alert("Faltan datos obligatorios para agregar al calendario.");
-      return "";
-    }
-
-    const baseUrl = "https://calendar.google.com/calendar/embed?src=cfe64a7e73e580180b6468e279686fb93434cf46a21de723b51dde3ef5a9bc96%40group.calendar.google.com&ctz=America%2FBogota";
-    const title = encodeURIComponent(`Visita Domiciliaria - Evaluador: ${evaluador}`);
-    const details = encodeURIComponent(`Tipo de visita: ${tipoVisita}\nEvaluador: ${evaluador}`);
-    const location = encodeURIComponent(direccion);
-
-    // Formato de fecha/hora para Google Calendar (YYYYMMDDTHHMMSSZ)
-    const [horaInicio, minutos] = hora.split(":");
-    const horaFin = (parseInt(horaInicio) + 1) % 24;
-    const startTime = `${fecha.replace(/-/g, "")}T${horaInicio}${minutos}00`;
-    const endTime = `${fecha.replace(/-/g, "")}T${horaFin.toString().padStart(2, "0")}${minutos}00`;
-
-    return `${baseUrl}&text=${title}&details=${details}&location=${location}&dates=${startTime}/${endTime}`;
   };
 
   return (
@@ -224,6 +218,7 @@ function Programar() {
               📅 Agregar a Google Calendar
             </a>
           )}
+
         </form>
       </section>
     </div>
