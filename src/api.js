@@ -1,6 +1,5 @@
 import API_BASE_URL from './main.jsx';
 
-
 // ✅ Expresión regular para validar emails
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -123,6 +122,20 @@ export async function subirEvidencia(id, archivo) {
         return await handleResponse(response);
     } catch (error) {
         console.error("❌ Error en subirEvidencia:", error);
+        return null;
+    }
+}
+
+// 🔹 Obtener la URL del calendario
+export async function obtenerCalendarUrl() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/settings/calendar_url`, {
+            method: "GET",
+            headers: { "Accept": "application/json" },
+        });
+        return await handleResponse(response);
+    } catch (error) {
+        console.error("❌ Error en obtenerCalendarUrl:", error);
         return null;
     }
 }
