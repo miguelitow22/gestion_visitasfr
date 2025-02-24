@@ -48,7 +48,26 @@ function Programar() {
     }
     if (!calendarUrl) fetchCalendarUrl();
   }, [calendarUrl]);
-
+  const generarEnlaceGoogleCalendar = () => {
+    if (!fecha || !hora || !direccion || !evaluador || !tipoVisita) {
+      alert("Faltan datos obligatorios para agregar al calendario.");
+      return "";
+    }
+  
+    const baseUrl = "https://calendar.google.com/calendar/render?action=TEMPLATE";
+    const title = encodeURIComponent(`Visita Domiciliaria - Evaluador: ${evaluador}`);
+    const details = encodeURIComponent(`Tipo de visita: ${tipoVisita}\nEvaluador: ${evaluador}`);
+    const location = encodeURIComponent(direccion);
+  
+    // Formato de fecha/hora para Google Calendar (YYYYMMDDTHHMMSSZ)
+    const [horaInicio, minutos] = hora.split(":");
+    const horaFin = (parseInt(horaInicio) + 1) % 24;
+    const startTime = `${fecha.replace(/-/g, "")}T${horaInicio}${minutos}00`;
+    const endTime = `${fecha.replace(/-/g, "")}T${horaFin.toString().padStart(2, "0")}${minutos}00`;
+  
+    return `${baseUrl}&text=${title}&details=${details}&location=${location}&dates=${startTime}/${endTime}`;
+  };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -189,6 +208,17 @@ function Programar() {
             </>
           )}
           <button type="submit" className="btn btn-primary">Programar Visita</button>
+          {seContacto === "Sí" && fecha && hora && direccion && evaluador && tipoVisita && (
+            <a
+              href={generarEnlaceGoogleCalendar()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-google"
+            >
+              📅 Agregar a Google Calendar
+            </a>
+          )}
+
         </form>
       </section>
     </div>
