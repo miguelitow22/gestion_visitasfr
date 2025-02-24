@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import supabase from "../config/supabaseClient";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import TimePicker from "react-time-picker";
 import { v4 as uuidv4 } from "uuid";
 
 function Programar() {
   const [calendarUrl, setCalendarUrl] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [calendarError, setCalendarError] = useState(false);
-
   const [casoId] = useState(uuidv4());
   const [solicitudAtlas, setSolicitudAtlas] = useState("");
   const [programador, setProgramador] = useState("HENRY MEDINA");
@@ -22,13 +24,14 @@ function Programar() {
   const [tipoVisita, setTipoVisita] = useState("Ingreso");
   const [intentoContacto, setIntentoContacto] = useState("1");
   const [motivoNoContacto, setMotivoNoContacto] = useState("");
-  const [fecha, setFecha] = useState("");
+  const [fecha, setFecha] = useState(null);
   const [hora, setHora] = useState("");
   const [direccion, setDireccion] = useState("");
   const [puntoReferencia, setPuntoReferencia] = useState("");
   const [evaluador, setEvaluador] = useState("");
   const [analista, setAnalista] = useState("");
   const [recontactar, setRecontactar] = useState("Sí");
+  const [horariosOcupados, setHorariosOcupados] = useState([]);
 
   useEffect(() => {
     async function fetchCalendarUrl() {
@@ -48,28 +51,44 @@ function Programar() {
     }
     if (!calendarUrl) fetchCalendarUrl();
   }, [calendarUrl]);
+
+  useEffect(() => {
+    async function verificarDisponibilidad() {
+      if (!fecha) return;
+      const { data, error } = await supabase.from("casos").select("hora").eq("fecha", fecha.toISOString().split("T")[0]);
+      if (!error) {
+        setHorariosOcupados(data.map((d) => d.hora));
+      }
+    }
+    verificarDisponibilidad();
+  }, [fecha]);
+
   const generarEnlaceGoogleCalendar = () => {
     if (!fecha || !hora || !direccion || !evaluador || !tipoVisita) {
       alert("Faltan datos obligatorios para agregar al calendario.");
       return "";
     }
-  
+
     const baseUrl = "https://calendar.google.com/calendar/embed?src=cfe64a7e73e580180b6468e279686fb93434cf46a21de723b51dde3ef5a9bc96%40group.calendar.google.com&ctz=America%2FBogota";
     const title = encodeURIComponent(`Visita Domiciliaria - Evaluador: ${evaluador}`);
     const details = encodeURIComponent(`Tipo de visita: ${tipoVisita}\nEvaluador: ${evaluador}`);
     const location = encodeURIComponent(direccion);
-  
+
     // Formato de fecha/hora para Google Calendar (YYYYMMDDTHHMMSSZ)
     const [horaInicio, minutos] = hora.split(":");
     const horaFin = (parseInt(horaInicio) + 1) % 24;
-    const startTime = `${fecha.replace(/-/g, "")}T${horaInicio}${minutos}00`;
-    const endTime = `${fecha.replace(/-/g, "")}T${horaFin.toString().padStart(2, "0")}${minutos}00`;
-  
+    const startTime = `${fecha.toISOString().split("T")[0].replace(/-/g, "")}T${horaInicio}${minutos}00`;
+    const endTime = `${fecha.toISOString().split("T")[0].replace(/-/g, "")}T${horaFin.toString().padStart(2, "0")}${minutos}00`;
+
     return `${baseUrl}&text=${title}&details=${details}&location=${location}&dates=${startTime}/${endTime}`;
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (horariosOcupados.includes(hora)) {
+      alert("Este horario ya está ocupado, por favor selecciona otro.");
+      return;
+    }
 
     const nuevoCaso = {
       casoId,
@@ -87,7 +106,7 @@ function Programar() {
       tipoVisita: seContacto === "Sí" ? tipoVisita : "No aplica",
       intentoContacto: seContacto === "No" ? intentoContacto : "No aplica",
       motivoNoContacto: seContacto === "No" ? motivoNoContacto : "No aplica",
-      fecha,
+      fecha: fecha.toISOString().split("T")[0],
       hora,
       direccion,
       puntoReferencia,
@@ -113,11 +132,6 @@ function Programar() {
         ) : (
           <iframe src={calendarUrl} title="Calendario" style={{ border: 0, width: "100%", height: "400px", borderRadius: "12px" }}></iframe>
         )}
-      </section>
-
-      <section className="programar-section">
-        <h3>Pendiente de Programar</h3>
-        <p>Aquí se mostrarán los casos que aún no han sido programados.</p>
       </section>
 
       <section className="programar-section">
@@ -178,9 +192,10 @@ function Programar() {
                 <option value="Pic Colombia">Pic Colombia</option>
               </select>
               <label>Fecha:</label>
-              <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} required />
+              <DatePicker selected={fecha} onChange={(date) => setFecha(date)} minDate={new Date()} dateFormat="yyyy-MM-dd" required />
               <label>Hora:</label>
-              <input type="time" value={hora} onChange={(e) => setHora(e.target.value)} required />
+              <TimePicker value={hora} onChange={setHora} disableClock required />
+              {horariosOcupados.includes(hora) && <p style={{ color: "red" }}>Este horario ya está ocupado, elige otro.</p>}
               <label>Dirección:</label>
               <input type="text" value={direccion} onChange={(e) => setDireccion(e.target.value)} required />
               <label>Punto de Referencia:</label>
@@ -218,7 +233,6 @@ function Programar() {
               📅 Agregar a Google Calendar
             </a>
           )}
-
         </form>
       </section>
     </div>
