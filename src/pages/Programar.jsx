@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import supabase from "../config/supabaseClient";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import TimePicker from "react-time-picker";
+import TimePicker from 'react-time-picker';
+import 'react-time-picker/dist/TimePicker.css';
+import 'react-clock/dist/Clock.css';
 import { v4 as uuidv4 } from "uuid";
 
 function Programar() {
