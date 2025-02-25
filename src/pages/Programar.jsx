@@ -58,9 +58,12 @@ function Programar() {
   useEffect(() => {
     async function verificarDisponibilidad() {
       if (!fecha) return;
-      const { data, error } = await supabase.from("casos").select("hora").eq("fecha", fecha.toISOString().split("T")[0]);
+      const { data, error } = await supabase
+        .from("casos")
+        .select("hora_visita") // ✅ CAMBIADO `hora` → `hora_visita`
+        .eq("fecha_visita", fecha.toISOString().split("T")[0]); // ✅ CAMBIADO `fecha` → `fecha_visita`
       if (!error) {
-        setHorariosOcupados(data.map((d) => d.hora));
+        setHorariosOcupados(data.map((d) => d.hora_visita));
       }
     }
     verificarDisponibilidad();
@@ -92,47 +95,48 @@ function Programar() {
     e.preventDefault();
     
     if (horariosOcupados.includes(hora)) {
-        alert("Este horario ya está ocupado, por favor selecciona otro.");
-        return;
+      alert("Este horario ya está ocupado, por favor selecciona otro.");
+      return;
     }
 
     const nuevoCaso = {
-        id: casoId, // 🔹 `id` en lugar de `casoId`
-        solicitud: solicitudAtlas, // 🔹 En la BD se llama `solicitud`
-        programador,
-        nombre,
-        documento,
-        cliente,
-        cargo,
-        telefono,
-        telefonosecundario: telefonoSecundario, // 🔹 Coincide con la BD
-        telefonoterciario: telefonoTerciario, // 🔹 Coincide con la BD
-        email,
-        seContacto,
-        tipo_visita: seContacto === "Sí" ? tipoVisita : "No aplica",
-        intentos_contacto: seContacto === "No" ? intentoContacto : 0, // 🔹 La BD espera un número, no texto
-        motivo_no_programacion: seContacto === "No" ? motivoNoContacto : "", // 🔹 Renombrado para coincidir con la BD
-        fecha_visita: fecha.toISOString().split("T")[0], // 🔹 CAMBIADO `fecha` → `fecha_visita`
-        hora_visita: hora, // 🔹 CAMBIADO `hora` → `hora_visita`
-        direccion,
-        punto_referencia: puntoReferencia,
-        evaluador_email: evaluador, // 🔹 Coincide con la BD
-        evaluador_asignado: analista, // 🔹 Coincide con la BD
-        recontactar,
+      id: casoId,
+      solicitud: solicitudAtlas,
+      programador,
+      nombre,
+      documento,
+      cliente,
+      cargo,
+      telefono,
+      telefonosecundario: telefonoSecundario,
+      telefonoterciario: telefonoTerciario,
+      email,
+      seContacto,
+      tipo_visita: seContacto === "Sí" ? tipoVisita : "No aplica",
+      intentos_contacto: seContacto === "No" ? intentoContacto : 0,
+      motivo_no_programacion: seContacto === "No" ? motivoNoContacto : "",
+      fecha_visita: fecha.toISOString().split("T")[0],
+      hora_visita: hora,
+      direccion,
+      punto_referencia: puntoReferencia,
+      evaluador_email: evaluador,
+      evaluador_asignado: analista,
+      recontactar,
+      estado: "pendiente", // ✅ AGREGADO ESTADO PARA EVITAR ERROR
     };
 
     console.log("📌 Enviando al backend:", nuevoCaso);
 
     try {
-        const response = await crearCaso(nuevoCaso); // 🔹 Llama a la función `crearCaso()` de `api.js`
-        if (response) {
-            alert("✅ Visita programada con éxito");
-        } else {
-            alert("❌ Hubo un error al registrar el caso.");
-        }
+      const response = await crearCaso(nuevoCaso); // 🔹 Llama a la función `crearCaso()` de `api.js`
+      if (response) {
+        alert("✅ Visita programada con éxito");
+      } else {
+        alert("❌ Hubo un error al registrar el caso.");
+      }
     } catch (error) {
-        console.error("❌ Error al enviar el caso:", error);
-        alert("❌ Error en el servidor. Verifica la consola.");
+      console.error("❌ Error al enviar el caso:", error);
+      alert("❌ Error en el servidor. Verifica la consola.");
     }
   };
 
