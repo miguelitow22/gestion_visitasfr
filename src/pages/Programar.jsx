@@ -93,52 +93,60 @@ function Programar() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (horariosOcupados.includes(hora)) {
-      alert("Este horario ya está ocupado, por favor selecciona otro.");
-      return;
+        alert("Este horario ya está ocupado, por favor selecciona otro.");
+        return;
+    }
+
+    // Expresión regular para validar email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert("❌ El correo electrónico ingresado no es válido.");
+        return;
     }
 
     const nuevoCaso = {
-      id: casoId,
-      solicitud: solicitudAtlas,
-      programador,
-      nombre,
-      documento,
-      cliente,
-      cargo,
-      telefono,
-      telefonosecundario: telefonoSecundario,
-      telefonoterciario: telefonoTerciario,
-      email,
-      seContacto,
-      tipo_visita: seContacto === "Sí" ? tipoVisita : "No aplica",
-      intentos_contacto: seContacto === "No" ? intentoContacto : 0,
-      motivo_no_programacion: seContacto === "No" ? motivoNoContacto : "",
-      fecha_visita: fecha.toISOString().split("T")[0],
-      hora_visita: hora,
-      direccion,
-      punto_referencia: puntoReferencia,
-      evaluador_email: evaluador,
-      evaluador_asignado: analista,
-      recontactar,
-      estado: "pendiente", // ✅ AGREGADO ESTADO PARA EVITAR ERROR
+        id: casoId,
+        solicitud: solicitudAtlas,
+        programador,
+        nombre,
+        documento,
+        cliente,
+        cargo,
+        telefono,
+        telefonosecundario: telefonoSecundario,
+        telefonoterciario: telefonoTerciario,
+        email,
+        seContacto,
+        tipo_visita: seContacto === "Sí" ? tipoVisita : "No aplica",
+        intentos_contacto: seContacto === "No" ? parseInt(intentoContacto) : 0, // ✅ Convertir a número
+        motivo_no_programacion: seContacto === "No" ? motivoNoContacto : "",
+        fecha_visita: fecha ? fecha.toISOString().split("T")[0] : null, // ✅ Evitar null
+        hora_visita: hora || null, // ✅ Evitar null
+        direccion,
+        punto_referencia: puntoReferencia,
+        evaluador_email: evaluador,
+        evaluador_asignado: analista,
+        recontactar,
+        estado: "pendiente",
     };
 
-    console.log("📌 Enviando al backend:", nuevoCaso);
+    console.log("📌 Verificando datos antes de enviar:", JSON.stringify(nuevoCaso, null, 2));
 
     try {
-      const response = await crearCaso(nuevoCaso); // 🔹 Llama a la función `crearCaso()` de `api.js`
-      if (response) {
-        alert("✅ Visita programada con éxito");
-      } else {
-        alert("❌ Hubo un error al registrar el caso.");
-      }
+        const response = await crearCaso(nuevoCaso);
+        if (response) {
+            alert("✅ Visita programada con éxito");
+        } else {
+            alert("❌ Hubo un error al registrar el caso.");
+        }
     } catch (error) {
-      console.error("❌ Error al enviar el caso:", error);
-      alert("❌ Error en el servidor. Verifica la consola.");
+        console.error("❌ Error al enviar el caso:", error);
+        alert("❌ Error en el servidor. Verifica la consola.");
     }
-  };
+};
+
 
   return (
     <div className="container programar-container">
