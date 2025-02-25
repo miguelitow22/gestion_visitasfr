@@ -8,6 +8,20 @@ import "react-datepicker/dist/react-datepicker.css";
 import { v4 as uuidv4 } from "uuid";
 import { crearCaso } from "../api"; // 🔹 Asegúrate de importar la función para enviar datos al backend
 
+import React, { useState, useEffect } from "react";
+import supabase from "../config/supabaseClient";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import TimePicker from "react-time-picker";
+import { v4 as uuidv4 } from "uuid";
+import { crearCaso } from "../api"; // 🔹 Asegúrate de importar la función para enviar datos al backend
+
+const evaluadores = [
+  { nombre: "Jairo", correo: "jairo@empresa.com" },
+  { nombre: "Ana", correo: "ana@empresa.com" },
+  { nombre: "Carlos", correo: "carlos@empresa.com" }
+];
+
 function Programar() {
   const [calendarUrl, setCalendarUrl] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -32,6 +46,7 @@ function Programar() {
   const [direccion, setDireccion] = useState("");
   const [puntoReferencia, setPuntoReferencia] = useState("");
   const [evaluador, setEvaluador] = useState("");
+  const [evaluadorEmail, setEvaluadorEmail] = useState("");
   const [analista, setAnalista] = useState("");
   const [recontactar, setRecontactar] = useState("Sí");
   const [horariosOcupados, setHorariosOcupados] = useState([]);
@@ -95,58 +110,55 @@ function Programar() {
     e.preventDefault();
 
     if (horariosOcupados.includes(hora)) {
-        alert("Este horario ya está ocupado, por favor selecciona otro.");
-        return;
+      alert("Este horario ya está ocupado, por favor selecciona otro.");
+      return;
     }
 
-    // Expresión regular para validar email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        alert("❌ El correo electrónico ingresado no es válido.");
-        return;
+    if (!evaluadorEmail) {
+      alert("❌ Debes seleccionar un evaluador.");
+      return;
     }
 
     const nuevoCaso = {
-        id: casoId,
-        solicitud: solicitudAtlas,
-        programador,
-        nombre,
-        documento,
-        cliente,
-        cargo,
-        telefono,
-        telefonosecundario: telefonoSecundario,
-        telefonoterciario: telefonoTerciario,
-        email,
-        seContacto,
-        tipo_visita: seContacto === "Sí" ? tipoVisita : "No aplica",
-        intentos_contacto: seContacto === "No" ? parseInt(intentoContacto) : 0, // ✅ Convertir a número
-        motivo_no_programacion: seContacto === "No" ? motivoNoContacto : "",
-        fecha_visita: fecha ? fecha.toISOString().split("T")[0] : null, // ✅ Evitar null
-        hora_visita: hora || null, // ✅ Evitar null
-        direccion,
-        punto_referencia: puntoReferencia,
-        evaluador_email: evaluador,
-        evaluador_asignado: analista,
-        recontactar,
-        estado: "pendiente",
+      id: casoId,
+      solicitud: solicitudAtlas,
+      programador,
+      nombre,
+      documento,
+      cliente,
+      cargo,
+      telefono,
+      telefonosecundario: telefonoSecundario,
+      telefonoterciario: telefonoTerciario,
+      email,
+      evaluador_email: evaluadorEmail, // ✅ Enviar automáticamente el correo
+      evaluador_asignado: evaluador,   // ✅ Guardamos el nombre del evaluador
+      seContacto,
+      tipo_visita: seContacto === "Sí" ? tipoVisita : "No aplica",
+      intentos_contacto: seContacto === "No" ? parseInt(intentoContacto) : 0,
+      motivo_no_programacion: seContacto === "No" ? motivoNoContacto : "",
+      fecha_visita: fecha ? fecha.toISOString().split("T")[0] : null,
+      hora_visita: hora || null,
+      direccion,
+      punto_referencia: puntoReferencia,
+      recontactar,
+      estado: "pendiente",
     };
 
-    console.log("📌 Verificando datos antes de enviar:", JSON.stringify(nuevoCaso, null, 2));
+    console.log("📌 Enviando datos:", JSON.stringify(nuevoCaso, null, 2));
 
     try {
-        const response = await crearCaso(nuevoCaso);
-        if (response) {
-            alert("✅ Visita programada con éxito");
-        } else {
-            alert("❌ Hubo un error al registrar el caso.");
-        }
+      const response = await crearCaso(nuevoCaso);
+      if (response) {
+        alert("✅ Visita programada con éxito");
+      } else {
+        alert("❌ Hubo un error al registrar el caso.");
+      }
     } catch (error) {
-        console.error("❌ Error al enviar el caso:", error);
-        alert("❌ Error en el servidor. Verifica la consola.");
+      console.error("❌ Error al enviar el caso:", error);
+      alert("❌ Error en el servidor. Verifica la consola.");
     }
-};
-
+  };
 
   return (
     <div className="container programar-container">
@@ -230,7 +242,20 @@ function Programar() {
               <label>Punto de Referencia:</label>
               <input type="text" value={puntoReferencia} onChange={(e) => setPuntoReferencia(e.target.value)} />
               <label>Evaluador:</label>
-              <input type="text" value={evaluador} onChange={(e) => setEvaluador(e.target.value)} required />
+              <select 
+                value={evaluador} 
+                onChange={(e) => {
+                  setEvaluador(e.target.value); // 🔹 Guarda el nombre del evaluador
+                  const correo = evaluadores.find(ev => ev.nombre === e.target.value)?.correo || "";
+                  setEvaluadorEmail(correo); // 🔹 Asigna automáticamente el correo
+                }} 
+                required
+              >
+                <option value="">Seleccione un evaluador</option>
+                {evaluadores.map((ev, index) => (
+                  <option key={index} value={ev.nombre}>{ev.nombre}</option>
+                ))}
+              </select>
             </>
           ) : (
             <>
