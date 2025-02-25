@@ -8,14 +8,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import { v4 as uuidv4 } from "uuid";
 import { crearCaso } from "../api"; // 🔹 Asegúrate de importar la función para enviar datos al backend
 
-import React, { useState, useEffect } from "react";
-import supabase from "../config/supabaseClient";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import TimePicker from "react-time-picker";
-import { v4 as uuidv4 } from "uuid";
-import { crearCaso } from "../api"; // 🔹 Asegúrate de importar la función para enviar datos al backend
-
 const evaluadores = [
   { nombre: "Jairo", correo: "jairo@empresa.com" },
   { nombre: "Ana", correo: "ana@empresa.com" },
