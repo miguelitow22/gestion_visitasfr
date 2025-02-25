@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import supabase from "../config/supabaseClient";
-import TimePicker from 'react-time-picker';
-import 'react-time-picker/dist/TimePicker.css';
-import 'react-clock/dist/Clock.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import TimePicker from "react-time-picker";
 import { v4 as uuidv4 } from "uuid";
+import { crearCaso } from "../api"; // 🔹 Asegúrate de importar la función para enviar datos al backend
 
 function Programar() {
   const [calendarUrl, setCalendarUrl] = useState("");
@@ -87,41 +86,52 @@ function Programar() {
     return `${baseUrl}&text=${title}&details=${details}&location=${location}&dates=${startTime}/${endTime}`;
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     if (horariosOcupados.includes(hora)) {
-      alert("Este horario ya está ocupado, por favor selecciona otro.");
-      return;
+        alert("Este horario ya está ocupado, por favor selecciona otro.");
+        return;
     }
 
     const nuevoCaso = {
-      casoId,
-      solicitudAtlas,
-      programador,
-      nombre,
-      documento,
-      cliente,
-      cargo,
-      telefono,
-      telefonoSecundario,
-      telefonoTerciario,
-      email,
-      seContacto,
-      tipoVisita: seContacto === "Sí" ? tipoVisita : "No aplica",
-      intentoContacto: seContacto === "No" ? intentoContacto : "No aplica",
-      motivoNoContacto: seContacto === "No" ? motivoNoContacto : "No aplica",
-      fecha: fecha.toISOString().split("T")[0],
-      hora,
-      direccion,
-      puntoReferencia,
-      evaluador,
-      analista,
-      recontactar,
+        id: casoId, // 🔹 `id` en lugar de `casoId`
+        solicitud: solicitudAtlas, // 🔹 En la BD se llama `solicitud`
+        programador,
+        nombre,
+        documento,
+        cliente,
+        cargo,
+        telefono,
+        telefonosecundario: telefonoSecundario, // 🔹 Coincide con la BD
+        telefonoterciario: telefonoTerciario, // 🔹 Coincide con la BD
+        email,
+        seContacto,
+        tipo_visita: seContacto === "Sí" ? tipoVisita : "No aplica",
+        intentos_contacto: seContacto === "No" ? intentoContacto : 0, // 🔹 La BD espera un número, no texto
+        motivo_no_programacion: seContacto === "No" ? motivoNoContacto : "", // 🔹 Renombrado para coincidir con la BD
+        fecha_visita: fecha.toISOString().split("T")[0], // 🔹 CAMBIADO `fecha` → `fecha_visita`
+        hora_visita: hora, // 🔹 CAMBIADO `hora` → `hora_visita`
+        direccion,
+        punto_referencia: puntoReferencia,
+        evaluador_email: evaluador, // 🔹 Coincide con la BD
+        evaluador_asignado: analista, // 🔹 Coincide con la BD
+        recontactar,
     };
 
-    console.log("Caso Programado:", nuevoCaso);
-    alert("Visita programada con éxito");
+    console.log("📌 Enviando al backend:", nuevoCaso);
+
+    try {
+        const response = await crearCaso(nuevoCaso); // 🔹 Llama a la función `crearCaso()` de `api.js`
+        if (response) {
+            alert("✅ Visita programada con éxito");
+        } else {
+            alert("❌ Hubo un error al registrar el caso.");
+        }
+    } catch (error) {
+        console.error("❌ Error al enviar el caso:", error);
+        alert("❌ Error en el servidor. Verifica la consola.");
+    }
   };
 
   return (
