@@ -2,7 +2,7 @@ import React from "react";
 
 function Home() {
   return (
-    <div className="container">
+    <div className="container home-container">
       <h2>Bienvenido a VerifiK</h2>
       <p>Selecciona una opción en el menú para continuar.</p>
     </div>

@@ -11,7 +11,7 @@ function Header() {
           width="150"
           height="150"
         />
-        <p aria-label="Descripción de la plataforma">
+        <p className="description">
           Esta página es para la gestión de visitas domiciliarias
         </p>
       </div>
