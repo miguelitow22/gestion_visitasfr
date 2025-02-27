@@ -6,7 +6,6 @@ import 'react-clock/dist/Clock.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { v4 as uuidv4 } from "uuid";
-import { crearCaso } from "../api"; // 🔹 Asegúrate de importar la función para enviar datos al backend
 
 const evaluadores = [
   { nombre: "Jairo", correo: "jairo@empresa.com" },
@@ -71,8 +70,8 @@ function Programar() {
       if (!fecha) return;
       const { data, error } = await supabase
         .from("casos")
-        .select("hora_visita") // ✅ CAMBIADO `hora` → `hora_visita`
-        .eq("fecha_visita", fecha.toISOString().split("T")[0]); // ✅ CAMBIADO `fecha` → `fecha_visita`
+        .select("hora_visita")
+        .eq("fecha_visita", fecha.toISOString().split("T")[0]);
       if (!error) {
         setHorariosOcupados(data.map((d) => d.hora_visita));
       }
@@ -99,7 +98,6 @@ function Programar() {
     const details = encodeURIComponent(`Tipo de visita: ${tipoVisita}\nEvaluador: ${evaluador}`);
     const location = encodeURIComponent(direccion);
 
-    // Formato de fecha/hora para Google Calendar (YYYYMMDDTHHMMSSZ)
     const [horaInicio, minutos] = hora.split(":");
     const horaFin = (parseInt(horaInicio) + 1) % 24;
     const formattedDate = fecha.toISOString().split("T")[0].replace(/-/g, "");
@@ -128,7 +126,6 @@ function Programar() {
       return;
     }
 
-    // 📌 Enlace al formulario según tipo de visita
     const formularios = {
       "Ingreso": "https://formulario.com/ingreso",
       "Seguimiento": "https://formulario.com/seguimiento",
@@ -140,7 +137,6 @@ function Programar() {
 
     const linkFormulario = formularios[tipoVisita] || "https://formulario.com/default";
 
-    // 📌 Datos del caso
     const nuevoCaso = {
       id: casoId,
       solicitud: solicitudAtlas,
@@ -164,7 +160,7 @@ function Programar() {
       direccion,
       punto_referencia: puntoReferencia,
       recontactar,
-      estado: seContacto === "Sí" ? "en curso" : "pendiente",
+      estado: seContacto === "Sí" ? "programado" : "pendiente",
       linkFormulario,
       regional
     };
@@ -172,20 +168,26 @@ function Programar() {
     console.log("📌 Enviando datos:", JSON.stringify(nuevoCaso, null, 2));
 
     try {
-      const response = await crearCaso(nuevoCaso);
-      if (response) {
-        alert("✅ Caso creado con éxito");
-        setIsCaseCreated(true); // ✅ Activar el estado de caso creado
+      const response = await fetch("https://gestionvisitas-production.up.railway.app/api/casos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(nuevoCaso)
+      });
 
-        // 🔄 **Deslizar la página hacia arriba**
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("❌ Respuesta del backend:", errorData);
+        alert("❌ Hubo un error al registrar el caso: " + (errorData.error || "Error desconocido"));
+      } else {
+        alert("✅ Caso creado con éxito");
+        setIsCaseCreated(true);
         window.scrollTo({ top: 0, behavior: "smooth" });
 
-        // 🔹 **Recargar después de 3 segundos**
         setTimeout(() => {
           window.location.reload();
         }, 3000);
-      } else {
-        alert("❌ Hubo un error al registrar el caso.");
       }
     } catch (error) {
       console.error("❌ Error al enviar el caso:", error);
@@ -278,9 +280,9 @@ function Programar() {
               <select 
                 value={evaluador} 
                 onChange={(e) => {
-                  setEvaluador(e.target.value); // 🔹 Guarda el nombre del evaluador
+                  setEvaluador(e.target.value);
                   const correo = evaluadores.find(ev => ev.nombre === e.target.value)?.correo || "";
-                  setEvaluadorEmail(correo); // 🔹 Asigna automáticamente el correo
+                  setEvaluadorEmail(correo);
                 }} 
                 required
               >
