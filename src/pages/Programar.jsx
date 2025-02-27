@@ -7,7 +7,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { v4 as uuidv4 } from "uuid";
 import { crearCaso } from "../api";
-import "../styles.css"; // Asegúrate de que este archivo se importe correctamente desde main
 
 const evaluadores = [
   { nombre: "Jairo", correo: "jairo@empresa.com" },
