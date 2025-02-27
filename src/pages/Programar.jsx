@@ -14,6 +14,8 @@ const evaluadores = [
   { nombre: "Carlos", correo: "carlos@empresa.com" }
 ];
 
+const regionales = ["Norte", "Sur", "Centro"];
+
 function Programar() {
   const [calendarUrl, setCalendarUrl] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -41,7 +43,9 @@ function Programar() {
   const [evaluadorEmail, setEvaluadorEmail] = useState("");
   const [analista, setAnalista] = useState("");
   const [recontactar, setRecontactar] = useState("Sí");
+  const [regional, setRegional] = useState("");
   const [horariosOcupados, setHorariosOcupados] = useState([]);
+  const [isCaseCreated, setIsCaseCreated] = useState(false);
 
   useEffect(() => {
     async function fetchCalendarUrl() {
@@ -75,6 +79,14 @@ function Programar() {
     }
     verificarDisponibilidad();
   }, [fecha]);
+
+  useEffect(() => {
+    if (seContacto === "Sí" || seContacto === "No") {
+      setTimeout(() => {
+        window.scrollTo({ top: 500, behavior: "smooth" });
+      }, 200);
+    }
+  }, [seContacto]);
 
   const generarEnlaceGoogleCalendar = (estado) => {
     if (!fecha || !hora || !direccion || !evaluador || !tipoVisita) {
@@ -148,7 +160,8 @@ function Programar() {
       punto_referencia: puntoReferencia,
       recontactar,
       estado: seContacto === "Sí" ? "programado" : "pendiente",
-      linkFormulario
+      linkFormulario,
+      regional
     };
 
     console.log("📌 Enviando datos:", JSON.stringify(nuevoCaso, null, 2));
@@ -157,20 +170,15 @@ function Programar() {
       const response = await crearCaso(nuevoCaso);
       if (response) {
         alert("✅ Caso creado con éxito");
+        setIsCaseCreated(true); // ✅ Activar el estado de caso creado
 
-        // 🔹 Generar el evento en Google Calendar y abrirlo en una nueva pestaña
-        const enlaceCalendar = generarEnlaceGoogleCalendar(seContacto === "Sí" ? "programado" : "pendiente");
-        if (enlaceCalendar) {
-          window.open(enlaceCalendar, "_blank");
-        }
-
-        // 🔄 **Deslizar la página hacia arriba para visualizar la confirmación**
+        // 🔄 **Deslizar la página hacia arriba**
         window.scrollTo({ top: 0, behavior: "smooth" });
 
-        // 🔄 **Actualizar la página después de agendar**
+        // 🔹 **Recargar después de 3 segundos**
         setTimeout(() => {
           window.location.reload();
-        }, 2000); // 🔹 Espera 2 segundos antes de recargar
+        }, 3000);
       } else {
         alert("❌ Hubo un error al registrar el caso.");
       }
@@ -276,6 +284,13 @@ function Programar() {
                   <option key={index} value={ev.nombre}>{ev.nombre}</option>
                 ))}
               </select>
+              <label>Regional:</label>
+              <select value={regional} onChange={(e) => setRegional(e.target.value)} required>
+                <option value="">Seleccione una regional</option>
+                {regionales.map((reg, index) => (
+                  <option key={index} value={reg}>{reg}</option>
+                ))}
+              </select>
             </>
           ) : (
             <>
@@ -286,9 +301,19 @@ function Programar() {
                 <option value="3">3</option>
               </select>
               <label>Motivo de No Contacto:</label>
-              <input type="text" value={motivoNoContacto} onChange={(e) => setMotivoNoContacto(e.target.value)} />
+              <input 
+                type="text" 
+                value={motivoNoContacto} 
+                onChange={(e) => setMotivoNoContacto(e.target.value)} 
+                required={seContacto === "No"}
+              />
               <label>Analista:</label>
-              <input type="text" value={analista} onChange={(e) => setAnalista(e.target.value)} required />
+              <input 
+                type="text" 
+                value={analista} 
+                onChange={(e) => setAnalista(e.target.value)} 
+                required={seContacto === "No"}
+              />
               <label>¿Se volverá a contactar?</label>
               <select value={recontactar} onChange={(e) => setRecontactar(e.target.value)}>
                 <option value="Sí">Sí</option>
@@ -297,24 +322,14 @@ function Programar() {
             </>
           )}
           <button type="submit" className="btn btn-primary">Programar Visita</button>
-          {seContacto === "Sí" && fecha && hora && direccion && evaluador && tipoVisita && (
+          {isCaseCreated && (
             <a
-              href={generarEnlaceGoogleCalendar("programado")}
+              href={generarEnlaceGoogleCalendar(seContacto === "Sí" ? "programado" : "pendiente")}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-google"
             >
               📅 Agregar a Google Calendar
-            </a>
-          )}
-          {seContacto === "No" && (
-            <a
-              href={generarEnlaceGoogleCalendar("pendiente")}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-google"
-            >
-              📅 Agregar Recordatorio a Google Calendar
             </a>
           )}
         </form>
