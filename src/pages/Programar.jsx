@@ -106,11 +106,24 @@ function Programar() {
       return;
     }
 
-    if (!evaluadorEmail) {
+    if (!evaluadorEmail && seContacto === "Sí") {
       alert("❌ Debes seleccionar un evaluador.");
       return;
     }
 
+    // 📌 Enlace al formulario según tipo de visita
+    const formularios = {
+      "Ingreso": "https://formulario.com/ingreso",
+      "Seguimiento": "https://formulario.com/seguimiento",
+      "Ingreso Bicicletas HA": "https://formulario.com/bicicletas-ingreso",
+      "Seguimiento Bicicletas HA": "https://formulario.com/bicicletas-seguimiento",
+      "Atlas": "https://formulario.com/atlas",
+      "Pic Colombia": "https://formulario.com/pic-colombia"
+    };
+
+    const linkFormulario = formularios[tipoVisita] || "https://formulario.com/default";
+
+    // 📌 Datos del caso
     const nuevoCaso = {
       id: casoId,
       solicitud: solicitudAtlas,
@@ -123,8 +136,8 @@ function Programar() {
       telefonosecundario: telefonoSecundario,
       telefonoterciario: telefonoTerciario,
       email,
-      evaluador_email: evaluadorEmail, // ✅ Enviar automáticamente el correo
-      evaluador_asignado: evaluador,   // ✅ Guardamos el nombre del evaluador
+      evaluador_email: evaluadorEmail,
+      evaluador_asignado: evaluador,
       seContacto,
       tipo_visita: seContacto === "Sí" ? tipoVisita : "No aplica",
       intentos_contacto: seContacto === "No" ? parseInt(intentoContacto) : 0,
@@ -134,7 +147,8 @@ function Programar() {
       direccion,
       punto_referencia: puntoReferencia,
       recontactar,
-      estado: seContacto === "Sí" ? "en curso" : "pendiente",
+      estado: seContacto === "Sí" ? "programado" : "pendiente",
+      linkFormulario
     };
 
     console.log("📌 Enviando datos:", JSON.stringify(nuevoCaso, null, 2));
@@ -144,14 +158,19 @@ function Programar() {
       if (response) {
         alert("✅ Caso creado con éxito");
 
-        // 🔹 Generar y abrir el evento de Google Calendar
+        // 🔹 Generar el evento en Google Calendar y abrirlo en una nueva pestaña
         const enlaceCalendar = generarEnlaceGoogleCalendar(seContacto === "Sí" ? "programado" : "pendiente");
         if (enlaceCalendar) {
           window.open(enlaceCalendar, "_blank");
         }
 
-        // 🔄 **Actualizar la página después de éxito**
-        window.location.reload();
+        // 🔄 **Deslizar la página hacia arriba para visualizar la confirmación**
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        // 🔄 **Actualizar la página después de agendar**
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000); // 🔹 Espera 2 segundos antes de recargar
       } else {
         alert("❌ Hubo un error al registrar el caso.");
       }
