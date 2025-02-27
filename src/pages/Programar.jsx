@@ -6,7 +6,8 @@ import 'react-clock/dist/Clock.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { v4 as uuidv4 } from "uuid";
-import { crearCaso } from "../api"; // 🔹 Asegúrate de importar la función para enviar datos al backend
+import { crearCaso } from "../api";
+import "../styles.css"; // Asegúrate de que este archivo se importe correctamente desde main
 
 const evaluadores = [
   { nombre: "Jairo", correo: "jairo@empresa.com" },
@@ -154,118 +155,162 @@ function Programar() {
 
   return (
     <div className="container programar-container">
-      <h2>Programar visitas domiciliarias</h2>
+      <h2 className="title">Programar Visitas Domiciliarias</h2>
 
-      <section className="programar-section">
+      <section className="calendar-section">
         <h3>Calendario</h3>
         {isLoading ? (
           <p>Cargando calendario...</p>
         ) : calendarError ? (
           <p style={{ color: "red" }}>No se pudo cargar el calendario.</p>
         ) : (
-          <iframe src={calendarUrl} title="Calendario" style={{ border: 0, width: "100%", height: "400px", borderRadius: "12px" }}></iframe>
+          <button className="btn btn-calendar" onClick={() => window.open(calendarUrl, "_blank")}>
+            📅 Ver Calendario
+          </button>
         )}
       </section>
 
-      <section className="programar-section">
-        <h3>Programación</h3>
+      <section className="form-section">
+        <h3>Formulario de Programación</h3>
         <form className="form-container" onSubmit={handleSubmit}>
-          <label>ID Atlas (Solicitud):</label>
-          <input type="text" value={solicitudAtlas} onChange={(e) => setSolicitudAtlas(e.target.value)} required />
+          <div className="form-group">
+            <label>ID Atlas (Solicitud):</label>
+            <input type="text" value={solicitudAtlas} onChange={(e) => setSolicitudAtlas(e.target.value)} required />
+          </div>
 
-          <label>Programador:</label>
-          <select value={programador} onChange={(e) => setProgramador(e.target.value)}>
-            <option value="HENRY MEDINA">HENRY MEDINA</option>
-            <option value="MIRLIN ARTEAGA">MIRLIN ARTEAGA</option>
-            <option value="NATALIA AGUDELO">NATALIA AGUDELO</option>
-            <option value="SARAY LOPEZ">SARAY LOPEZ</option>
-            <option value="JOHANA RODRÍGUEZ">JOHANA RODRÍGUEZ</option>
-          </select>
+          <div className="form-group">
+            <label>Programador:</label>
+            <select value={programador} onChange={(e) => setProgramador(e.target.value)}>
+              <option value="HENRY MEDINA">HENRY MEDINA</option>
+              <option value="MIRLIN ARTEAGA">MIRLIN ARTEAGA</option>
+              <option value="NATALIA AGUDELO">NATALIA AGUDELO</option>
+              <option value="SARAY LOPEZ">SARAY LOPEZ</option>
+              <option value="JOHANA RODRÍGUEZ">JOHANA RODRÍGUEZ</option>
+            </select>
+          </div>
 
-          <label>Nombre:</label>
-          <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
+          <div className="form-group">
+            <label>Nombre:</label>
+            <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
+          </div>
 
-          <label>Documento:</label>
-          <input type="text" value={documento} onChange={(e) => setDocumento(e.target.value)} required />
+          <div className="form-group">
+            <label>Documento:</label>
+            <input type="text" value={documento} onChange={(e) => setDocumento(e.target.value)} required />
+          </div>
 
-          <label>Cliente:</label>
-          <input type="text" value={cliente} onChange={(e) => setCliente(e.target.value)} required />
+          <div className="form-group">
+            <label>Cliente:</label>
+            <input type="text" value={cliente} onChange={(e) => setCliente(e.target.value)} required />
+          </div>
 
-          <label>Cargo:</label>
-          <input type="text" value={cargo} onChange={(e) => setCargo(e.target.value)} required />
+          <div className="form-group">
+            <label>Cargo:</label>
+            <input type="text" value={cargo} onChange={(e) => setCargo(e.target.value)} required />
+          </div>
 
-          <label>Teléfono:</label>
-          <input type="tel" value={telefono} onChange={(e) => setTelefono(e.target.value)} required />
+          <div className="form-group">
+            <label>Teléfono:</label>
+            <input type="tel" value={telefono} onChange={(e) => setTelefono(e.target.value)} required />
+          </div>
 
-          <label>Teléfono Secundario:</label>
-          <input type="tel" value={telefonoSecundario} onChange={(e) => setTelefonoSecundario(e.target.value)} />
+          <div className="form-group">
+            <label>Teléfono Secundario:</label>
+            <input type="tel" value={telefonoSecundario} onChange={(e) => setTelefonoSecundario(e.target.value)} />
+          </div>
 
-          <label>Teléfono Terciario:</label>
-          <input type="tel" value={telefonoTerciario} onChange={(e) => setTelefonoTerciario(e.target.value)} />
+          <div className="form-group">
+            <label>Teléfono Terciario:</label>
+            <input type="tel" value={telefonoTerciario} onChange={(e) => setTelefonoTerciario(e.target.value)} />
+          </div>
 
-          <label>Email:</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <div className="form-group">
+            <label>Email:</label>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          </div>
 
-          <label>¿Se contactó al evaluado?</label>
-          <select value={seContacto} onChange={(e) => setSeContacto(e.target.value)}>
-            <option value="">Seleccione...</option>
-            <option value="Sí">Sí</option>
-            <option value="No">No</option>
-          </select>
+          <div className="form-group">
+            <label>¿Se contactó al evaluado?</label>
+            <select value={seContacto} onChange={(e) => setSeContacto(e.target.value)}>
+              <option value="">Seleccione...</option>
+              <option value="Sí">Sí</option>
+              <option value="No">No</option>
+            </select>
+          </div>
 
           {seContacto === "Sí" ? (
             <>
-              <label>Tipo de Visita:</label>
-              <select value={tipoVisita} onChange={(e) => setTipoVisita(e.target.value)}>
-                <option value="Ingreso">Ingreso</option>
-                <option value="Seguimiento">Seguimiento</option>
-                <option value="Ingreso Bicicletas HA">Ingreso Bicicletas HA</option>
-                <option value="Seguimiento Bicicletas HA">Seguimiento Bicicletas HA</option>
-                <option value="Atlas">Atlas</option>
-                <option value="Pic Colombia">Pic Colombia</option>
-              </select>
-              <label>Fecha:</label>
-              <DatePicker selected={fecha} onChange={(date) => setFecha(date)} minDate={new Date()} dateFormat="yyyy-MM-dd" required />
-              <label>Hora:</label>
-              <TimePicker value={hora} onChange={setHora} disableClock required />
-              {horariosOcupados.includes(hora) && <p style={{ color: "red" }}>Este horario ya está ocupado, elige otro.</p>}
-              <label>Dirección:</label>
-              <input type="text" value={direccion} onChange={(e) => setDireccion(e.target.value)} required />
-              <label>Punto de Referencia:</label>
-              <input type="text" value={puntoReferencia} onChange={(e) => setPuntoReferencia(e.target.value)} />
-              <label>Evaluador:</label>
-              <select 
-                value={evaluador} 
-                onChange={(e) => {
-                  setEvaluador(e.target.value); // 🔹 Guarda el nombre del evaluador
-                  const correo = evaluadores.find(ev => ev.nombre === e.target.value)?.correo || "";
-                  setEvaluadorEmail(correo); // 🔹 Asigna automáticamente el correo
-                }} 
-                required
-              >
-                <option value="">Seleccione un evaluador</option>
-                {evaluadores.map((ev, index) => (
-                  <option key={index} value={ev.nombre}>{ev.nombre}</option>
-                ))}
-              </select>
+              <div className="form-group">
+                <label>Tipo de Visita:</label>
+                <select value={tipoVisita} onChange={(e) => setTipoVisita(e.target.value)}>
+                  <option value="Ingreso">Ingreso</option>
+                  <option value="Seguimiento">Seguimiento</option>
+                  <option value="Ingreso Bicicletas HA">Ingreso Bicicletas HA</option>
+                  <option value="Seguimiento Bicicletas HA">Seguimiento Bicicletas HA</option>
+                  <option value="Atlas">Atlas</option>
+                  <option value="Pic Colombia">Pic Colombia</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Fecha:</label>
+                <DatePicker selected={fecha} onChange={(date) => setFecha(date)} minDate={new Date()} dateFormat="yyyy-MM-dd" required />
+              </div>
+              <div className="form-group">
+                <label>Hora:</label>
+                <TimePicker value={hora} onChange={setHora} disableClock required />
+                {horariosOcupados.includes(hora) && <p style={{ color: "red" }}>Este horario ya está ocupado, elige otro.</p>}
+              </div>
+              <div className="form-group">
+                <label>Dirección:</label>
+                <input type="text" value={direccion} onChange={(e) => setDireccion(e.target.value)} required />
+              </div>
+              <div className="form-group">
+                <label>Punto de Referencia:</label>
+                <input type="text" value={puntoReferencia} onChange={(e) => setPuntoReferencia(e.target.value)} />
+              </div>
+              <div className="form-group">
+                <label>Evaluador:</label>
+                <select 
+                  value={evaluador} 
+                  onChange={(e) => {
+                    setEvaluador(e.target.value); // 🔹 Guarda el nombre del evaluador
+                    const correo = evaluadores.find(ev => ev.nombre === e.target.value)?.correo || "";
+                    setEvaluadorEmail(correo); // 🔹 Asigna automáticamente el correo
+                  }} 
+                  required
+                >
+                  <option value="">Seleccione un evaluador</option>
+                  {evaluadores.map((ev, index) => (
+                    <option key={index} value={ev.nombre}>{ev.nombre}</option>
+                  ))}
+                </select>
+              </div>
             </>
           ) : (
             <>
-              <label>Intento de contacto:</label>
-              <select value={intentoContacto} onChange={(e) => setIntentoContacto(e.target.value)}>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-              </select>
-              <label>Motivo de No Contacto:</label>
-              <input type="text" value={motivoNoContacto} onChange={(e) => setMotivoNoContacto(e.target.value)} />
-              <label>Analista:</label>
-              <input type="text" value={analista} onChange={(e) => setAnalista(e.target.value)} required />
-              <label>¿Se volverá a contactar?</label>
-              <select value={recontactar} onChange={(e) => setRecontactar(e.target.value)}>
-                <option value="Sí">Sí</option>
-                <option value="No">No</option>
-              </select>
+              <div className="form-group">
+                <label>Intento de contacto:</label>
+                <select value={intentoContacto} onChange={(e) => setIntentoContacto(e.target.value)}>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Motivo de No Contacto:</label>
+                <input type="text" value={motivoNoContacto} onChange={(e) => setMotivoNoContacto(e.target.value)} />
+              </div>
+              <div className="form-group">
+                <label>Analista:</label>
+                <input type="text" value={analista} onChange={(e) => setAnalista(e.target.value)} required />
+              </div>
+              <div className="form-group">
+                <label>¿Se volverá a contactar?</label>
+                <select value={recontactar} onChange={(e) => setRecontactar(e.target.value)}>
+                  <option value="Sí">Sí</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
             </>
           )}
           <button type="submit" className="btn btn-primary">Programar Visita</button>
