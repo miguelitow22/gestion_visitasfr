@@ -583,12 +583,26 @@ body {
 }
 
 .btn-google {
-  background: #0056b3;
+  background: #043885;
   color: white;
 }
 
 .btn-google:hover {
-  background: #0056b3;
+  background: #043885;
+}
+
+
+/* Estilos para el TimePicker */
+.time-picker {
+  width: 100%;
+}
+
+.time-picker input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  font-size: 16px;
 }
 
 /* Responsividad */

@@ -227,7 +227,7 @@ function Programar() {
               <label>Fecha:</label>
               <DatePicker selected={fecha} onChange={(date) => setFecha(date)} minDate={new Date()} dateFormat="yyyy-MM-dd" required />
               <label>Hora:</label>
-              <TimePicker value={hora} onChange={setHora} disableClock required />
+              <TimePicker value={hora} onChange={setHora} disableClock required className="time-picker" />
               {horariosOcupados.includes(hora) && <p style={{ color: "red" }}>Este horario ya está ocupado, elige otro.</p>}
               <label>Dirección:</label>
               <input type="text" value={direccion} onChange={(e) => setDireccion(e.target.value)} required />
