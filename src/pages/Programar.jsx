@@ -76,7 +76,7 @@ function Programar() {
     verificarDisponibilidad();
   }, [fecha]);
 
-  const generarEnlaceGoogleCalendar = () => {
+  const generarEnlaceGoogleCalendar = (estado) => {
     if (!fecha || !hora || !direccion || !evaluador || !tipoVisita) {
       alert("Faltan datos obligatorios para agregar al calendario.");
       return "";
@@ -134,7 +134,7 @@ function Programar() {
       direccion,
       punto_referencia: puntoReferencia,
       recontactar,
-      estado: "pendiente",
+      estado: seContacto === "Sí" ? "programado" : "pendiente",
     };
 
     console.log("📌 Enviando datos:", JSON.stringify(nuevoCaso, null, 2));
@@ -271,12 +271,22 @@ function Programar() {
           <button type="submit" className="btn btn-primary">Programar Visita</button>
           {seContacto === "Sí" && fecha && hora && direccion && evaluador && tipoVisita && (
             <a
-              href={generarEnlaceGoogleCalendar()}
+              href={generarEnlaceGoogleCalendar("programado")}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-google"
             >
               📅 Agregar a Google Calendar
+            </a>
+          )}
+          {seContacto === "No" && (
+            <a
+              href={generarEnlaceGoogleCalendar("pendiente")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-google"
+            >
+              📅 Agregar Recordatorio a Google Calendar
             </a>
           )}
         </form>
