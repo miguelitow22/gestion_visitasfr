@@ -123,6 +123,11 @@ function Programar() {
       return;
     }
 
+    if (!regional) {
+      alert("❌ Debes seleccionar una regional.");
+      return;
+    }
+
     // 📌 Enlace al formulario según tipo de visita
     const formularios = {
       "Ingreso": "https://formulario.com/ingreso",
@@ -159,7 +164,7 @@ function Programar() {
       direccion,
       punto_referencia: puntoReferencia,
       recontactar,
-      estado: seContacto === "Sí" ? "programado" : "pendiente",
+      estado: seContacto === "Sí" ? "en curso" : "pendiente",
       linkFormulario,
       regional
     };
