@@ -134,7 +134,7 @@ function Programar() {
       direccion,
       punto_referencia: puntoReferencia,
       recontactar,
-      estado: seContacto === "Sí" ? "en curso" : "pendiente",
+      estado: seContacto === "Sí" ? "programado" : "pendiente",
     };
 
     console.log("📌 Enviando datos:", JSON.stringify(nuevoCaso, null, 2));
@@ -142,7 +142,16 @@ function Programar() {
     try {
       const response = await crearCaso(nuevoCaso);
       if (response) {
-        alert("✅ Visita programada con éxito");
+        alert("✅ Caso creado con éxito");
+
+        // 🔹 Generar y abrir el evento de Google Calendar
+        const enlaceCalendar = generarEnlaceGoogleCalendar(seContacto === "Sí" ? "programado" : "pendiente");
+        if (enlaceCalendar) {
+          window.open(enlaceCalendar, "_blank");
+        }
+
+        // 🔄 **Actualizar la página después de éxito**
+        window.location.reload();
       } else {
         alert("❌ Hubo un error al registrar el caso.");
       }
