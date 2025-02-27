@@ -134,7 +134,7 @@ function Programar() {
       direccion,
       punto_referencia: puntoReferencia,
       recontactar,
-      estado: seContacto === "Sí" ? "programado" : "pendiente",
+      estado: seContacto === "Sí" ? "en curso" : "pendiente",
     };
 
     console.log("📌 Enviando datos:", JSON.stringify(nuevoCaso, null, 2));
