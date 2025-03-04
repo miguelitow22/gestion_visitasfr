@@ -85,6 +85,7 @@ export async function actualizarCaso(id, datos) {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
+                evaluador_email: datos.evaluador_email || "",
                 estado: datos.estado,
                 tipo_visita: datos.tipo_visita || "",
                 direccion: datos.direccion || "",
