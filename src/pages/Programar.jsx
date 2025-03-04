@@ -213,7 +213,7 @@ function Programar() {
       <section className="programar-section">
         <h3>Programación</h3>
         <form className="form-container" onSubmit={handleSubmit}>
-          <label>ID Atlas (Solicitud):</label>
+          <label>Solicitud:</label>
           <input type="text" value={solicitudAtlas} onChange={(e) => setSolicitudAtlas(e.target.value)} required />
 
           <label>Programador:</label>
@@ -336,6 +336,7 @@ function Programar() {
               rel="noopener noreferrer"
               className="btn btn-google"
             >
+              <button onClick={() => window.location.reload()}></button>
               📅 Agregar a Google Calendar
             </a>
           )}
