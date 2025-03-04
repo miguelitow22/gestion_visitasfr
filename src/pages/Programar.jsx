@@ -45,7 +45,6 @@ function Programar() {
   const [regional, setRegional] = useState("");
   const [horariosOcupados, setHorariosOcupados] = useState([]);
   const [isCaseCreated, setIsCaseCreated] = useState(false);
-  const [errorMensaje, setErrorMensaje] = useState("");
 
   useEffect(() => {
     async function fetchCalendarUrl() {
@@ -111,15 +110,14 @@ function Programar() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMensaje("");
 
     if (horariosOcupados.includes(hora)) {
-      setErrorMensaje("Este horario ya está ocupado, por favor selecciona otro.");
+      alert("Este horario ya está ocupado, por favor selecciona otro.");
       return;
     }
 
     if (!evaluadorEmail && seContacto === "Sí") {
-      setErrorMensaje("❌ Debes seleccionar un evaluador.");
+      alert("❌ Debes seleccionar un evaluador.");
       return;
     }
 
@@ -162,7 +160,7 @@ function Programar() {
       direccion,
       punto_referencia: puntoReferencia,
       recontactar,
-      estado: seContacto === "Sí" ? "programado" : "pendiente",
+      estado: seContacto === "Sí" ? "en curso" : "pendiente",
       linkFormulario,
       regional
     };
@@ -215,8 +213,7 @@ function Programar() {
       <section className="programar-section">
         <h3>Programación</h3>
         <form className="form-container" onSubmit={handleSubmit}>
-          {errorMensaje && <p style={{ color: "red" }}>{errorMensaje}</p>}
-          <label>Solicitud</label>
+          <label>ID Atlas (Solicitud):</label>
           <input type="text" value={solicitudAtlas} onChange={(e) => setSolicitudAtlas(e.target.value)} required />
 
           <label>Programador:</label>
@@ -339,7 +336,6 @@ function Programar() {
               rel="noopener noreferrer"
               className="btn btn-google"
             >
-              <button onClick={() => window.location.reload()}></button>
               📅 Agregar a Google Calendar
             </a>
           )}
