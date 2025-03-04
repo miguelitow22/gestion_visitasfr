@@ -35,7 +35,7 @@ export async function obtenerCasos() {
 // 🔹 Crear un caso con validaciones y manejo de errores
 export async function crearCaso(datosCaso) {
     try {
-        const camposRequeridos = ["id", "nombre", "telefono", "email", "estado"];
+        const camposRequeridos = ["nombre", "telefono", "email", "estado"];
         for (const campo of camposRequeridos) {
             if (!datosCaso[campo]) {
                 throw new Error(`❌ Falta el campo obligatorio: ${campo}`);
@@ -51,7 +51,6 @@ export async function crearCaso(datosCaso) {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                id: datosCaso.id,
                 nombre: datosCaso.nombre,
                 documento: datosCaso.documento || "",
                 telefono: datosCaso.telefono,
