@@ -35,15 +35,15 @@ export async function obtenerCasos() {
 // 🔹 Crear un caso con validaciones y manejo de errores
 export async function crearCaso(datosCaso) {
     try {
-        const camposRequeridos = ["nombre", "telefono", "email", "estado"];
+        const camposRequeridos = ["nombre", "telefono", "estado"];
         for (const campo of camposRequeridos) {
             if (!datosCaso[campo]) {
                 throw new Error(`❌ Falta el campo obligatorio: ${campo}`);
             }
         }
 
-        // ✅ Validar formato de email antes de enviarlo
-        if (!emailRegex.test(datosCaso.email)) {
+        // ✅ Validar formato de email si se proporciona
+        if (datosCaso.email && !emailRegex.test(datosCaso.email)) {
             throw new Error("❌ El correo electrónico ingresado no es válido.");
         }
 
@@ -54,9 +54,10 @@ export async function crearCaso(datosCaso) {
                 nombre: datosCaso.nombre,
                 documento: datosCaso.documento || "",
                 telefono: datosCaso.telefono,
-                email: datosCaso.email,
+                email: datosCaso.email || "",
                 estado: datosCaso.estado,
                 tipo_visita: datosCaso.tipo_visita || "",
+                ciudad: datosCaso.ciudad || "",
                 direccion: datosCaso.direccion || "",
                 punto_referencia: datosCaso.punto_referencia || "",
                 fecha_visita: datosCaso.fecha_visita || "",
@@ -65,6 +66,7 @@ export async function crearCaso(datosCaso) {
                 motivo_no_programacion: datosCaso.motivo_no_programacion || "",
                 evaluador_email: datosCaso.evaluador_email || "",
                 evaluador_asignado: datosCaso.evaluador_asignado || "",
+                observaciones: datosCaso.observaciones || ""
             }),
         });
 
@@ -88,6 +90,7 @@ export async function actualizarCaso(id, datos) {
                 evaluador_email: datos.evaluador_email || "",
                 estado: datos.estado,
                 tipo_visita: datos.tipo_visita || "",
+                ciudad: datos.ciudad || "",
                 direccion: datos.direccion || "",
                 punto_referencia: datos.punto_referencia || "",
                 fecha_visita: datos.fecha_visita || "",
@@ -95,6 +98,7 @@ export async function actualizarCaso(id, datos) {
                 intentos_contacto: datos.intentos_contacto || 0,
                 motivo_no_programacion: datos.motivo_no_programacion || "",
                 evaluador_asignado: datos.evaluador_asignado || "",
+                observaciones: datos.observaciones || ""
             }),
         });
 
