@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import supabase from "../config/supabaseClient";
-import TimePicker from 'react-time-picker';
-import 'react-time-picker/dist/TimePicker.css';
-import 'react-clock/dist/Clock.css';
+import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { v4 as uuidv4 } from "uuid";
 
 const evaluadores = [
@@ -34,8 +31,7 @@ function Programar() {
   const [tipoVisita, setTipoVisita] = useState("Ingreso");
   const [intentoContacto, setIntentoContacto] = useState("1");
   const [motivoNoContacto, setMotivoNoContacto] = useState("");
-  const [fecha, setFecha] = useState(null);
-  const [hora, setHora] = useState("");
+  const [fechaHora, setFechaHora] = useState(null);
   const [direccion, setDireccion] = useState("");
   const [puntoReferencia, setPuntoReferencia] = useState("");
   const [evaluador, setEvaluador] = useState("");
@@ -68,20 +64,20 @@ function Programar() {
 
   useEffect(() => {
     async function verificarDisponibilidad() {
-      if (!fecha) return;
+      if (!fechaHora) return;
       const { data, error } = await supabase
         .from("casos")
         .select("hora_visita")
-        .eq("fecha_visita", fecha.toISOString().split("T")[0]);
+        .eq("fecha_visita", fechaHora.toISOString().split("T")[0]);
       if (!error) {
         setHorariosOcupados(data.map((d) => d.hora_visita));
       }
     }
     verificarDisponibilidad();
-  }, [fecha]);
+  }, [fechaHora]);
 
   const generarEnlaceGoogleCalendar = (estado) => {
-    if (!fecha || !hora || !direccion || !evaluador || !tipoVisita) {
+    if (!fechaHora || !direccion || !evaluador || !tipoVisita) {
       alert("Faltan datos obligatorios para agregar al calendario.");
       return "";
     }
@@ -91,12 +87,9 @@ function Programar() {
     const details = encodeURIComponent(`Tipo de visita: ${tipoVisita}\nEvaluador: ${evaluador}`);
     const location = encodeURIComponent(direccion);
 
-    const [horaInicio, minutos] = hora.split(":");
-    const horaFin = (parseInt(horaInicio) + 1) % 24;
-    const formattedDate = fecha.toISOString().split("T")[0].replace(/-/g, "");
-
-    const startTime = `${formattedDate}T${horaInicio}${minutos}00`;
-    const endTime = `${formattedDate}T${horaFin.toString().padStart(2, "0")}${minutos}00`;
+    const formattedDate = fechaHora.toISOString().split("T")[0].replace(/-/g, "");
+    const startTime = fechaHora.toISOString().replace(/-|:|\.\d\d\d/g, "");
+    const endTime = new Date(fechaHora.getTime() + 60 * 60 * 1000).toISOString().replace(/-|:|\.\d\d\d/g, "");
 
     return `${baseUrl}&text=${title}&details=${details}&location=${location}&dates=${startTime}/${endTime}`;
   };
@@ -104,7 +97,7 @@ function Programar() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (horariosOcupados.includes(hora)) {
+    if (horariosOcupados.includes(fechaHora.toISOString().split("T")[1].substring(0, 5))) {
       alert("Este horario ya está ocupado, por favor selecciona otro.");
       return;
     }
@@ -148,8 +141,8 @@ function Programar() {
       tipo_visita: seContacto === "Sí" ? tipoVisita : "No aplica",
       intentos_contacto: seContacto === "No" ? parseInt(intentoContacto) : 0,
       motivo_no_programacion: seContacto === "No" ? motivoNoContacto : "",
-      fecha_visita: fecha ? fecha.toISOString().split("T")[0] : null,
-      hora_visita: hora || null,
+      fecha_visita: fechaHora ? fechaHora.toISOString().split("T")[0] : null,
+      hora_visita: fechaHora ? fechaHora.toISOString().split("T")[1].substring(0, 5) : null,
       direccion,
       punto_referencia: puntoReferencia,
       recontactar,
@@ -259,11 +252,18 @@ function Programar() {
                 <option value="Atlas">Atlas</option>
                 <option value="Pic Colombia">Pic Colombia</option>
               </select>
-              <label>Fecha:</label>
-              <DatePicker selected={fecha} onChange={(date) => setFecha(date)} minDate={new Date()} dateFormat="yyyy-MM-dd" required />
-              <label>Hora:</label>
-              <TimePicker value={hora} onChange={setHora} disableClock required className="time-picker" />
-              {horariosOcupados.includes(hora) && <p style={{ color: "red" }}>Este horario ya está ocupado, elige otro.</p>}
+              <label>Fecha y Hora:</label>
+              <DatePicker
+                selected={fechaHora}
+                onChange={(date) => setFechaHora(date)}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="yyyy-MM-dd HH:mm"
+                minDate={new Date()}
+                required
+              />
+              {horariosOcupados.includes(fechaHora?.toISOString().split("T")[1].substring(0, 5)) && <p style={{ color: "red" }}>Este horario ya está ocupado, elige otro.</p>}
               <label>Dirección:</label>
               <input type="text" value={direccion} onChange={(e) => setDireccion(e.target.value)} required />
               <label>Punto de Referencia:</label>
