@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from "react";
 import supabase from "../config/supabaseClient";
-import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from "react-datepicker";
-import TimePicker from 'react-time-picker';
-import 'react-time-picker/dist/TimePicker.css';
-import 'react-clock/dist/Clock.css';
+import "react-datepicker/dist/react-datepicker.css";
+import TimePicker from "react-time-picker";
+import "react-clock/dist/Clock.css";
 import { v4 as uuidv4 } from "uuid";
 
 const evaluadores = [
   { nombre: "Jairo", correo: "jairo@empresa.com" },
   { nombre: "Ana", correo: "ana@empresa.com" },
-  { nombre: "Carlos", correo: "carlos@empresa.com" }
+];
+
+const analistas = [
+  { nombre: "Carlos", correo: "carlos@empresa.com", telefono: "+573001234567" },
+  { nombre: "María", correo: "maria@empresa.com", telefono: "+573002345678" },
 ];
 
 const regionales = ["Norte", "Sur", "Centro"];
+const tiposVisita = ["Ingreso", "Seguimiento", "Virtual"];
 
 function Programar() {
   const [calendarUrl, setCalendarUrl] = useState("");
@@ -30,22 +34,24 @@ function Programar() {
   const [telefonoSecundario, setTelefonoSecundario] = useState("");
   const [telefonoTerciario, setTelefonoTerciario] = useState("");
   const [email, setEmail] = useState("");
-  const [seContacto, setSeContacto] = useState("");
+  const [seContacto, setSeContacto] = useState("Sí");
   const [tipoVisita, setTipoVisita] = useState("Ingreso");
   const [intentoContacto, setIntentoContacto] = useState("1");
   const [motivoNoContacto, setMotivoNoContacto] = useState("");
   const [fecha, setFecha] = useState(null);
-  const [hora, setHora] = useState("");
+  const [hora, setHora] = useState("10:00");
   const [direccion, setDireccion] = useState("");
   const [puntoReferencia, setPuntoReferencia] = useState("");
   const [evaluador, setEvaluador] = useState("");
   const [evaluadorEmail, setEvaluadorEmail] = useState("");
   const [analista, setAnalista] = useState("");
+  const [analistaEmail, setAnalistaEmail] = useState("");
   const [recontactar, setRecontactar] = useState("Sí");
   const [regional, setRegional] = useState("");
   const [horariosOcupados, setHorariosOcupados] = useState([]);
   const [isCaseCreated, setIsCaseCreated] = useState(false);
   const [errorMensaje, setErrorMensaje] = useState("");
+  const [evidencia, setEvidencia] = useState(null);
 
   useEffect(() => {
     async function fetchCalendarUrl() {
@@ -79,6 +85,10 @@ function Programar() {
     }
     verificarDisponibilidad();
   }, [fecha]);
+
+  useEffect(() => {
+    if (seContacto === "No") setRegional("");
+  }, [seContacto]);
 
   const generarEnlaceGoogleCalendar = (estado) => {
     if (!fecha || !hora || !direccion || !evaluador || !tipoVisita) {
@@ -114,7 +124,7 @@ function Programar() {
       return;
     }
 
-    if (!regional) {
+    if (seContacto === "Sí" && !regional) {
       alert("❌ Debes seleccionar una regional.");
       return;
     }
@@ -252,12 +262,9 @@ function Programar() {
             <>
               <label>Tipo de Visita:</label>
               <select value={tipoVisita} onChange={(e) => setTipoVisita(e.target.value)}>
-                <option value="Ingreso">Ingreso</option>
-                <option value="Seguimiento">Seguimiento</option>
-                <option value="Ingreso Bicicletas HA">Ingreso Bicicletas HA</option>
-                <option value="Seguimiento Bicicletas HA">Seguimiento Bicicletas HA</option>
-                <option value="Atlas">Atlas</option>
-                <option value="Pic Colombia">Pic Colombia</option>
+                {tiposVisita.map((t) => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
               </select>
               <label>Fecha:</label>
               <DatePicker selected={fecha} onChange={(date) => setFecha(date)} minDate={new Date()} dateFormat="yyyy-MM-dd" required />
@@ -307,17 +314,23 @@ function Programar() {
                 required={seContacto === "No"}
               />
               <label>Analista:</label>
-              <input 
-                type="text" 
-                value={analista} 
-                onChange={(e) => setAnalista(e.target.value)} 
-                required={seContacto === "No"}
-              />
+              <select onChange={(e) => {
+                setAnalista(e.target.value);
+                const correo = analistas.find(a => a.nombre === e.target.value)?.correo || "";
+                setAnalistaEmail(correo);
+              }}>
+                <option value="">Seleccione un analista</option>
+                {analistas.map(a => (
+                  <option key={a.nombre} value={a.nombre}>{a.nombre}</option>
+                ))}
+              </select>
               <label>¿Se volverá a contactar?</label>
               <select value={recontactar} onChange={(e) => setRecontactar(e.target.value)}>
                 <option value="Sí">Sí</option>
                 <option value="No">No</option>
               </select>
+              <label>Subir Evidencia:</label>
+              <input type="file" onChange={(e) => setEvidencia(e.target.files[0])} />
             </>
           )}
           <button type="submit" className="btn btn-primary">Programar Visita</button>
