@@ -6,6 +6,7 @@ function GestionCasos() {
   const [casoSeleccionado, setCasoSeleccionado] = useState(null);
   const [estado, setEstado] = useState("pendiente");
   const [intentosContacto, setIntentosContacto] = useState(0);
+  const [observaciones, setObservaciones] = useState("");
   const [evidencia, setEvidencia] = useState(null);
   const [paginaActual, setPaginaActual] = useState(1);
   const casosPorPagina = 4;
@@ -22,6 +23,7 @@ function GestionCasos() {
     setCasoSeleccionado(caso);
     setEstado(caso.estado);
     setIntentosContacto(caso.intentos_contacto || 0);
+    setObservaciones(caso.observaciones || "");
   };
 
   const handleActualizarCaso = async (e) => {
@@ -31,7 +33,7 @@ function GestionCasos() {
       return;
     }
 
-    const datosActualizados = { estado, intentos_contacto: intentosContacto };
+    const datosActualizados = { estado, intentos_contacto: intentosContacto, observaciones };
     try {
       await actualizarCaso(casoSeleccionado.id, datosActualizados);
       alert("Caso actualizado con éxito");
@@ -95,6 +97,7 @@ function GestionCasos() {
               <p><strong>Email:</strong> {casoSeleccionado.email}</p>
               <p><strong>Estado:</strong> {casoSeleccionado.estado}</p>
               <p><strong>Intentos de Contacto:</strong> {casoSeleccionado.intentos_contacto}</p>
+              <p><strong>Observaciones:</strong> {casoSeleccionado.observaciones || "Sin observaciones"}</p>
 
               <h3>Subir Evidencia</h3>
               <input type="file" onChange={(e) => setEvidencia(e.target.files[0])} />
@@ -116,6 +119,8 @@ function GestionCasos() {
                 </select>
                 <label>Intentos de Contacto</label>
                 <input type="number" value={intentosContacto} onChange={(e) => setIntentosContacto(e.target.value)} />
+                <label>Observaciones</label>
+                <textarea value={observaciones} onChange={(e) => setObservaciones(e.target.value)} />
                 <button type="submit" className="btn btn-primary">Actualizar Caso</button>
               </form>
             </div>
