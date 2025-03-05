@@ -205,7 +205,7 @@ function Programar() {
         <h3>Programación</h3>
         <form className="form-container" onSubmit={handleSubmit}>
           {errorMensaje && <p style={{ color: "red" }}>{errorMensaje}</p>}
-          <label>Solicitud</label>
+          <label>Solicitud:</label>
           <input type="text" value={solicitudAtlas} onChange={(e) => setSolicitudAtlas(e.target.value)} required />
 
           <label>Programador:</label>
