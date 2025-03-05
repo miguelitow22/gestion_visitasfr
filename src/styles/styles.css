@@ -9,7 +9,6 @@
   --box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
   --box-shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
-
 /* Reset general */
 * {
   margin: 0;
@@ -33,13 +32,13 @@ body {
 
 /* Contenedor general */
 .container {
-  width: 100%;
-  max-width: 1400px;
-  margin: 80px auto;
+  width: 95%;
+  max-width: 1200px;
+  margin: 50px auto;
   background: white;
-  padding: 50px;
+  padding: 30px;
   border-radius: var(--border-radius);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--box-shadow);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -75,7 +74,7 @@ body {
 .form-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 30px;
+  gap: 20px;
   width: 100%;
   padding: 20px;
   background: white;
@@ -118,14 +117,14 @@ body {
 
 /* Botones */
 .btn {
-  padding: 14px 24px;
+  padding: 12px 20px;
   font-size: 16px;
   font-weight: bold;
   text-align: center;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s ease-in-out;
 }
 
 .btn-primary {
@@ -233,25 +232,25 @@ body {
 /* GESTIÓN DE CASOS */
 .casos-lista {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
   justify-content: center;
-  padding: 30px;
+  padding: 20px;
 }
 
 .caso-item {
   background: white;
-  padding: 30px;
+  padding: 20px;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   text-align: center;
   transition: transform 0.3s ease-in-out, box-shadow 0.3s;
-  border-left: 6px solid var(--primary-color);
+  border-left: 5px solid var(--primary-color);
   cursor: pointer;
 }
 
 .caso-item:hover {
-  transform: scale(1.07);
+  transform: scale(1.05);
   box-shadow: var(--box-shadow-hover);
 }
 
@@ -469,8 +468,8 @@ body {
 
 @media (max-width: 768px) {
   .container {
-    width: 95%;
-    padding: 35px;
+    width: 100%;
+    padding: 20px;
   }
 
   .nav ul {
@@ -487,8 +486,8 @@ body {
   }
 
   .btn {
-    padding: 16px 24px;
-    font-size: 18px;
+    padding: 14px;
+    font-size: 16px;
   }
 
   .logo-container img {
