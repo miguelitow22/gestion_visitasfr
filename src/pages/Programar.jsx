@@ -46,17 +46,17 @@ function Programar() {
   const [hora, setHora] = useState("10:00");
   const [direccion, setDireccion] = useState("");
   const [puntoReferencia, setPuntoReferencia] = useState("");
-  const [evaluador, setEvaluador] = useState("");
-  const [evaluadorEmail, setEvaluadorEmail] = useState("");
-  const [analista, setAnalista] = useState("");
-  const [analistaEmail, setAnalistaEmail] = useState("");
+  const [evaluador, setEvaluador] = useState(null);
+  const [evaluadorEmail, setEvaluadorEmail] = useState(null);
+  const [analista, setAnalista] = useState(null);
+  const [analistaEmail, setAnalistaEmail] = useState(null);
   const [recontactar, setRecontactar] = useState("Sí");
-  const [regional, setRegional] = useState("");
+  const [regional, setRegional] = useState(null);
   const [horariosOcupados, setHorariosOcupados] = useState([]);
   const [isCaseCreated, setIsCaseCreated] = useState(false);
   const [errorMensaje, setErrorMensaje] = useState("");
   const [evidencia, setEvidencia] = useState(null);
-  const [ciudad, setCiudad] = useState("");
+  const [ciudad, setCiudad] = useState(null);
 
   useEffect(() => {
     async function fetchCalendarUrl() {
@@ -92,7 +92,12 @@ function Programar() {
   }, [fecha]);
 
   useEffect(() => {
-    if (seContacto === "No") setRegional("");
+    if (seContacto === "No") {
+      setRegional(null);
+      setFecha(null);
+      setHora("10:00");
+      setDireccion("");
+    }
   }, [seContacto]);
 
   const generarEnlaceGoogleCalendar = (estado) => {
@@ -124,15 +129,17 @@ function Programar() {
       return;
     }
 
-    if (!evaluadorEmail && seContacto === "Sí") {
-      alert("❌ Debes seleccionar un evaluador.");
+    if (seContacto === "Sí" && (!evaluador || !evaluadorEmail || !regional || !fecha || !direccion || !ciudad)) {
+      setErrorMensaje("❌ Faltan datos obligatorios en visitas programadas");
       return;
     }
 
-    if (seContacto === "Sí" && !regional) {
-      alert("❌ Debes seleccionar una regional.");
+    if (seContacto === "No" && (!intentoContacto || !motivoNoContacto || !analista || !analistaEmail)) {
+      setErrorMensaje("❌ Faltan datos para visitas no contactadas");
       return;
     }
+
+    setErrorMensaje("");
 
     const formularios = {
       "Ingreso": "https://formulario.com/ingreso",
@@ -154,24 +161,24 @@ function Programar() {
       cliente,
       cargo,
       telefono,
-      telefonosecundario: telefonoSecundario,
-      telefonoterciario: telefonoTerciario,
-      email,
-      evaluador_email: evaluadorEmail,
-      evaluador_asignado: evaluador,
+      telefonosecundario: telefonoSecundario || null,
+      telefonoterciario: telefonoTerciario || null,
+      email: email || null,
+      evaluador_email: evaluadorEmail || null,
+      evaluador_asignado: evaluador || null,
       seContacto,
       tipo_visita: seContacto === "Sí" ? tipoVisita : "No aplica",
       intentos_contacto: seContacto === "No" ? parseInt(intentoContacto) : 0,
       motivo_no_programacion: seContacto === "No" ? motivoNoContacto : "",
       fecha_visita: fecha ? fecha.toISOString().split("T")[0] : null,
-      hora_visita: hora || null,
-      direccion,
-      punto_referencia: puntoReferencia,
+      hora_visita: fecha ? hora : null,
+      direccion: direccion || null,
+      punto_referencia: puntoReferencia || null,
       recontactar,
       estado: seContacto === "Sí" ? "en curso" : "pendiente",
       linkFormulario,
-      regional,
-      ciudad
+      regional: regional || "No aplica",
+      ciudad: ciudad || null
     };
 
     console.log("📌 Enviando datos:", JSON.stringify(nuevoCaso, null, 2));
@@ -259,7 +266,6 @@ function Programar() {
 
           <label>¿Se contactó al evaluado?</label>
           <select value={seContacto} onChange={(e) => setSeContacto(e.target.value)}>
-            <option value="">Seleccione...</option>
             <option value="Sí">Sí</option>
             <option value="No">No</option>
           </select>
