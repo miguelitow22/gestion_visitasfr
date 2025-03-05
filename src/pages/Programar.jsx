@@ -45,6 +45,7 @@ function Programar() {
   const [regional, setRegional] = useState("");
   const [horariosOcupados, setHorariosOcupados] = useState([]);
   const [isCaseCreated, setIsCaseCreated] = useState(false);
+  const [errorMensaje, setErrorMensaje] = useState("");
 
   useEffect(() => {
     async function fetchCalendarUrl() {
@@ -78,14 +79,6 @@ function Programar() {
     }
     verificarDisponibilidad();
   }, [fecha]);
-
-  useEffect(() => {
-    if (seContacto === "Sí" || seContacto === "No") {
-      setTimeout(() => {
-        window.scrollTo({ top: 500, behavior: "smooth" });
-      }, 200);
-    }
-  }, [seContacto]);
 
   const generarEnlaceGoogleCalendar = (estado) => {
     if (!fecha || !hora || !direccion || !evaluador || !tipoVisita) {
@@ -183,11 +176,9 @@ function Programar() {
       } else {
         alert("✅ Caso creado con éxito");
         setIsCaseCreated(true);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-
         setTimeout(() => {
           window.location.reload();
-        }, 10000);
+        }, 5000);
       }
     } catch (error) {
       console.error("❌ Error al enviar el caso:", error);
@@ -213,7 +204,8 @@ function Programar() {
       <section className="programar-section">
         <h3>Programación</h3>
         <form className="form-container" onSubmit={handleSubmit}>
-          <label>Solicitud:</label>
+          {errorMensaje && <p style={{ color: "red" }}>{errorMensaje}</p>}
+          <label>Solicitud</label>
           <input type="text" value={solicitudAtlas} onChange={(e) => setSolicitudAtlas(e.target.value)} required />
 
           <label>Programador:</label>
@@ -336,7 +328,6 @@ function Programar() {
               rel="noopener noreferrer"
               className="btn btn-google"
             >
-              <button onClick={() => window.location.reload()}></button>
               📅 Agregar a Google Calendar
             </a>
           )}
