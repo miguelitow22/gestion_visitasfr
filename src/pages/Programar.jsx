@@ -17,7 +17,11 @@ const analistas = [
 ];
 
 const regionales = ["Norte", "Sur", "Centro"];
-const tiposVisita = ["Ingreso", "Seguimiento", "Virtual"];
+const tiposVisita = [
+  "Ingreso", "Seguimiento", "Virtual",
+  "Ingreso Bicicletas HA", "Seguimiento Bicicletas HA",
+  "Atlas", "Pic Colombia"
+];
 
 function Programar() {
   const [calendarUrl, setCalendarUrl] = useState("");
@@ -52,6 +56,7 @@ function Programar() {
   const [isCaseCreated, setIsCaseCreated] = useState(false);
   const [errorMensaje, setErrorMensaje] = useState("");
   const [evidencia, setEvidencia] = useState(null);
+  const [ciudad, setCiudad] = useState("");
 
   useEffect(() => {
     async function fetchCalendarUrl() {
@@ -165,7 +170,8 @@ function Programar() {
       recontactar,
       estado: seContacto === "Sí" ? "en curso" : "pendiente",
       linkFormulario,
-      regional
+      regional,
+      ciudad
     };
 
     console.log("📌 Enviando datos:", JSON.stringify(nuevoCaso, null, 2));
@@ -297,6 +303,8 @@ function Programar() {
                   <option key={index} value={reg}>{reg}</option>
                 ))}
               </select>
+              <label>Ciudad:</label>
+              <input type="text" value={ciudad} onChange={(e) => setCiudad(e.target.value)} required={seContacto === "Sí"} />
             </>
           ) : (
             <>
