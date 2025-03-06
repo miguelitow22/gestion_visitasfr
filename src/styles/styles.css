@@ -9,6 +9,7 @@
   --box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
   --box-shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
+
 /* Reset general */
 * {
   margin: 0;
@@ -176,7 +177,7 @@ body {
 }
 
 .btn-google:hover {
-  background: #043885;
+  background: #032b68;
 }
 
 /* ENCABEZADO */
@@ -596,20 +597,22 @@ body {
 }
 
 .btn-google:hover {
-  background: #043885;
+  background: #032b68;
 }
 
 /* Estilos para el TimePicker */
 .time-picker {
   width: 100%;
+  max-width: 250px;
+  margin: auto;
 }
 
 .time-picker input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #bbb;
-  border-radius: 8px;
+  padding: 10px;
   font-size: 16px;
+  border-radius: 8px;
+  width: 100%;
+  text-align: center;
 }
 
 /* Responsividad */
