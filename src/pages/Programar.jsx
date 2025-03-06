@@ -100,6 +100,10 @@ function Programar() {
     }
   }, [seContacto]);
 
+  const normalizarHora = (hora) => {
+    return hora.length === 5 ? hora : hora.slice(0, 5);
+  };
+
   const generarEnlaceGoogleCalendar = (estado) => {
     if (!fecha || !hora || !direccion || !evaluador || !tipoVisita) {
       alert("Faltan datos obligatorios para agregar al calendario.");
@@ -124,7 +128,7 @@ function Programar() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (horariosOcupados.includes(hora)) {
+    if (horariosOcupados.map(normalizarHora).includes(normalizarHora(hora))) {
       alert("Este horario ya está ocupado, por favor selecciona otro.");
       return;
     }
@@ -281,7 +285,18 @@ function Programar() {
               <label>Fecha:</label>
               <DatePicker selected={fecha} onChange={(date) => setFecha(date)} minDate={new Date()} dateFormat="yyyy-MM-dd" required />
               <label>Hora:</label>
-              <TimePicker value={hora} onChange={setHora} required className="time-picker" />
+              <TimePicker
+                onChange={(newTime) => {
+                  console.log("Hora seleccionada:", newTime);
+                  setHora(newTime);
+                }}
+                value={hora}
+                disableClock={true}
+                format="HH:mm"
+                clearIcon={null}
+                required
+                className="time-picker"
+              />
               {horariosOcupados.includes(hora) && <p style={{ color: "red" }}>Este horario ya está ocupado, elige otro.</p>}
               <label>Dirección:</label>
               <input type="text" value={direccion} onChange={(e) => setDireccion(e.target.value)} required />
