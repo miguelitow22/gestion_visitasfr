@@ -85,7 +85,16 @@ body {
 
 @media (max-width: 768px) {
   .form-container {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Asegura que los formularios sean de una sola columna en pantallas pequeñas */
+  }
+
+  .casos-lista {
+    grid-template-columns: 1fr; /* Asegura que los casos se muestren uno debajo del otro en móviles */
+  }
+
+  .panel-detalles-actualizacion {
+    flex-direction: column; /* Evita que los paneles se vean demasiado estrechos */
+    align-items: center;
   }
 }
 
@@ -253,6 +262,12 @@ body {
 .caso-item:hover {
   transform: scale(1.05);
   box-shadow: var(--box-shadow-hover);
+}
+
+.caso-item.seleccionado {
+  border-left: 6px solid var(--secondary-color);
+  background: #eef7ff;
+  transition: all 0.3s ease-in-out;
 }
 
 .caso-id {
@@ -487,13 +502,31 @@ body {
   }
 
   .btn {
-    padding: 14px;
-    font-size: 16px;
+    padding: 16px 20px; /* Aumentamos el tamaño del botón */
+    font-size: 18px;
   }
 
   .logo-container img {
     max-width: 200px;
     height: auto;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    font-size: 14px; /* Reduce ligeramente el tamaño de fuente para que no se vea excesivo en móviles */
+    padding: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .casos-lista {
+    grid-template-columns: 1fr;
+  }
+
+  .caso-item {
+    padding: 15px;
+    font-size: 16px;
   }
 }
 
@@ -600,7 +633,6 @@ body {
   background: #032b68;
 }
 
-
 .hora-container {
   display: flex;
   align-items: center;
@@ -619,7 +651,6 @@ body {
   text-align: center;
 }
 
-
 /* Responsividad */
 @media (max-width: 768px) {
   .form-container {
@@ -630,4 +661,10 @@ body {
     font-size: 14px;
     padding: 10px;
   }
+}
+
+.panel-casos,
+.panel-seleccionado {
+  width: 90%;
+  max-width: 800px; /* Evita que en pantallas grandes se vean demasiado anchos */
 }
