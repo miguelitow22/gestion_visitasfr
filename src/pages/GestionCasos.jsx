@@ -9,7 +9,7 @@ function GestionCasos() {
   const [observaciones, setObservaciones] = useState("");
   const [evidencia, setEvidencia] = useState(null);
   const [paginaActual, setPaginaActual] = useState(1);
-  const casosPorPagina = 4;
+  const casosPorPagina = 12;
   const detallesRef = useRef(null);
 
   useEffect(() => {
