@@ -7,7 +7,7 @@ function Consultas() {
   };
 
   return (
-    <div className="container consultas-container">
+    <div id="consultas-section" className="container consultas-container">
       <h2>En esta página encontrarás los documentos y archivos de la operación</h2>
       
       <section className="consulta-section">

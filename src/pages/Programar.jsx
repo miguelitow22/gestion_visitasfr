@@ -229,7 +229,7 @@ function Programar() {
   };
 
   return (
-    <div className="container programar-container">
+    <div id="programar-section" className="container programar-container">
       <h2>Programar visitas domiciliarias</h2>
 
       <section className="programar-section">

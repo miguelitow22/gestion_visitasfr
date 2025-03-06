@@ -2,7 +2,7 @@ import React from "react";
 
 function Reportar() {
   return (
-    <div className="container reportar-container">
+    <div id="reportar-section" className="container reportar-container">
       <h2>En esta página podrás reportar incidencias y eventos de la operación</h2>
 
       <section className="reportar-section">

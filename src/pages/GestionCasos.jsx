@@ -74,7 +74,7 @@ function GestionCasos() {
   const casosPaginados = casos.slice(indiceInicial, indiceFinal);
 
   return (
-    <div className="container gestion-casos-container">
+    <div id="gestion-casos-section" className="container gestion-casos-container">
       <h2>Gestión de Casos</h2>
       <div className="panel-casos">
         <h3>Casos Registrados</h3>
