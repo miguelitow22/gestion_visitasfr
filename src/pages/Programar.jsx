@@ -211,18 +211,22 @@ function Programar() {
     }
   };
 
-  // Generar opciones de hora cada 30 minutos
-  const generarOpcionesHoras = () => {
-    let opciones = [];
-    for (let h = 6; h <= 22; h++) { // Horario de 6:00 AM a 10:00 PM
-      let horaStr = h < 10 ? `0${h}` : `${h}`;
-      opciones.push(`${horaStr}:00`);
-      opciones.push(`${horaStr}:30`);
-    }
-    return opciones;
+  // Generar opciones de hora (formato 24h)
+  const horasDisponibles = Array.from({ length: 17 }, (_, i) => {
+    const hora = i + 6; // Rango de 6 AM a 10 PM
+    return hora < 10 ? `0${hora}` : `${hora}`;
+  });
+
+  // Opciones de minutos
+  const minutosDisponibles = ["00", "15", "30", "45"];
+
+  const handleHoraChange = (e) => {
+    setHora(`${e.target.value}:${hora.split(":")[1] || "00"}`);
   };
 
-  const horasDisponibles = generarOpcionesHoras();
+  const handleMinutoChange = (e) => {
+    setHora(`${hora.split(":")[0] || "06"}:${e.target.value}`);
+  };
 
   return (
     <div className="container programar-container">
@@ -296,17 +300,31 @@ function Programar() {
               <label>Fecha:</label>
               <DatePicker selected={fecha} onChange={(date) => setFecha(date)} minDate={new Date()} dateFormat="yyyy-MM-dd" required />
               <label>Hora:</label>
-              <select
-                value={hora}
-                onChange={(e) => setHora(e.target.value)}
-                required
-                className="time-select"
-              >
-                <option value="">Seleccione una hora</option>
-                {horasDisponibles.map((horaOpt, index) => (
-                  <option key={index} value={horaOpt}>{horaOpt}</option>
-                ))}
-              </select>
+              <div className="hora-container">
+                <select
+                  value={hora.split(":")[0]}
+                  onChange={handleHoraChange}
+                  required
+                  className="time-select"
+                >
+                  <option value="">HH</option>
+                  {horasDisponibles.map((h, index) => (
+                    <option key={index} value={h}>{h}</option>
+                  ))}
+                </select>
+                :
+                <select
+                  value={hora.split(":")[1]}
+                  onChange={handleMinutoChange}
+                  required
+                  className="time-select"
+                >
+                  <option value="">MM</option>
+                  {minutosDisponibles.map((m, index) => (
+                    <option key={index} value={m}>{m}</option>
+                  ))}
+                </select>
+              </div>
               {horariosOcupados.includes(hora) && <p style={{ color: "red" }}>Este horario ya está ocupado, elige otro.</p>}
               <label>Dirección:</label>
               <input type="text" value={direccion} onChange={(e) => setDireccion(e.target.value)} required />

@@ -600,29 +600,23 @@ body {
   background: #032b68;
 }
 
-/* Estilos para el TimePicker */
-.time-picker {
-  width: 100%;
-  max-width: 250px;
-  margin: auto;
-}
 
-.time-picker input {
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 8px;
-  width: 100%;
-  text-align: center;
+.hora-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
 }
 
 .time-select {
-  width: 100%;
-  padding: 12px;
+  width: 70px;
+  padding: 10px;
   font-size: 16px;
   border: 1px solid #bbb;
   border-radius: 8px;
   background: #f9f9f9;
   cursor: pointer;
+  text-align: center;
 }
 
 
