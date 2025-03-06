@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { obtenerCasos, actualizarCaso, subirEvidencia } from "../api";
 
 function GestionCasos() {
@@ -10,6 +10,7 @@ function GestionCasos() {
   const [evidencia, setEvidencia] = useState(null);
   const [paginaActual, setPaginaActual] = useState(1);
   const casosPorPagina = 4;
+  const detallesRef = useRef(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -24,6 +25,11 @@ function GestionCasos() {
     setEstado(caso.estado);
     setIntentosContacto(caso.intentos_contacto || 0);
     setObservaciones(caso.observaciones || "");
+
+    // 🔽 Hacer scroll automático hacia la sección de actualización
+    setTimeout(() => {
+      detallesRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
   };
 
   const handleActualizarCaso = async (e) => {
@@ -88,8 +94,7 @@ function GestionCasos() {
           <button onClick={() => setPaginaActual(paginaActual + 1)} disabled={indiceFinal >= casos.length}>Siguiente</button>
         </div>
         {casoSeleccionado && (
-          <div className="panel-detalles-actualizacion">
-            {/* Panel de Detalles */}
+          <div ref={detallesRef} className="panel-detalles-actualizacion">
             <div className="panel-detalles">
               <h3>Detalles del Caso Seleccionado</h3>
               <p><strong>Nombre:</strong> {casoSeleccionado.nombre}</p>
@@ -106,7 +111,6 @@ function GestionCasos() {
                 <p>📂 <a href={casoSeleccionado.evidencia_url} target="_blank" rel="noopener noreferrer">Ver Evidencia</a></p>
               )}
             </div>
-            {/* Panel de Actualización */}
             <div className="panel-actualizacion">
               <h3>Actualizar Caso</h3>
               <form onSubmit={handleActualizarCaso} className="form-container">
