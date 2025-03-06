@@ -25,8 +25,7 @@ function GestionCasos() {
     setEstado(caso.estado);
     setIntentosContacto(caso.intentos_contacto || 0);
     setObservaciones(caso.observaciones || "");
-
-    // 🔽 Hacer scroll automático hacia la sección de actualización
+    
     setTimeout(() => {
       detallesRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 100);
@@ -83,6 +82,7 @@ function GestionCasos() {
           {casosPaginados.map((caso) => (
             <div key={caso.id} className={`caso-item ${casoSeleccionado?.id === caso.id ? "seleccionado" : ""}`}
               onClick={() => handleSeleccionarCaso(caso)}>
+              <p><strong>Solicitud:</strong> {caso.solicitud}</p>
               <p><strong>Nombre:</strong> {caso.nombre}</p>
               <p><strong>Estado:</strong> {caso.estado}</p>
             </div>
@@ -97,6 +97,7 @@ function GestionCasos() {
           <div ref={detallesRef} className="panel-detalles-actualizacion">
             <div className="panel-detalles">
               <h3>Detalles del Caso Seleccionado</h3>
+              <p><strong>Solicitud:</strong> {casoSeleccionado.solicitud}</p>
               <p><strong>Nombre:</strong> {casoSeleccionado.nombre}</p>
               <p><strong>Teléfono:</strong> {casoSeleccionado.telefono}</p>
               <p><strong>Email:</strong> {casoSeleccionado.email}</p>
