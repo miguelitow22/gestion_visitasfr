@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import supabase from "../config/supabaseClient";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import TimePicker from "react-time-picker";
-import "react-clock/dist/Clock.css";
 import { v4 as uuidv4 } from "uuid";
 
 const evaluadores = [
@@ -213,6 +211,19 @@ function Programar() {
     }
   };
 
+  // Generar opciones de hora cada 30 minutos
+  const generarOpcionesHoras = () => {
+    let opciones = [];
+    for (let h = 6; h <= 22; h++) { // Horario de 6:00 AM a 10:00 PM
+      let horaStr = h < 10 ? `0${h}` : `${h}`;
+      opciones.push(`${horaStr}:00`);
+      opciones.push(`${horaStr}:30`);
+    }
+    return opciones;
+  };
+
+  const horasDisponibles = generarOpcionesHoras();
+
   return (
     <div className="container programar-container">
       <h2>Programar visitas domiciliarias</h2>
@@ -285,18 +296,17 @@ function Programar() {
               <label>Fecha:</label>
               <DatePicker selected={fecha} onChange={(date) => setFecha(date)} minDate={new Date()} dateFormat="yyyy-MM-dd" required />
               <label>Hora:</label>
-              <TimePicker
-                onChange={(newTime) => {
-                  console.log("Hora seleccionada:", newTime);
-                  setHora(newTime);
-                }}
+              <select
                 value={hora}
-                disableClock={true}
-                format="HH:mm"
-                clearIcon={null}
+                onChange={(e) => setHora(e.target.value)}
                 required
-                className="time-picker"
-              />
+                className="time-select"
+              >
+                <option value="">Seleccione una hora</option>
+                {horasDisponibles.map((horaOpt, index) => (
+                  <option key={index} value={horaOpt}>{horaOpt}</option>
+                ))}
+              </select>
               {horariosOcupados.includes(hora) && <p style={{ color: "red" }}>Este horario ya está ocupado, elige otro.</p>}
               <label>Dirección:</label>
               <input type="text" value={direccion} onChange={(e) => setDireccion(e.target.value)} required />
