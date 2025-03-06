@@ -37,7 +37,7 @@ function Programar() {
   const [telefono, setTelefono] = useState("");
   const [telefonoSecundario, setTelefonoSecundario] = useState("");
   const [telefonoTerciario, setTelefonoTerciario] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(null);
   const [seContacto, setSeContacto] = useState("Sí");
   const [tipoVisita, setTipoVisita] = useState("Ingreso");
   const [intentoContacto, setIntentoContacto] = useState("1");
@@ -262,7 +262,7 @@ function Programar() {
           <input type="tel" value={telefonoTerciario} onChange={(e) => setTelefonoTerciario(e.target.value)} />
 
           <label>Email:</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input type="email" value={email || ""} onChange={(e) => setEmail(e.target.value || null)} placeholder="Ingrese el email si aplica" />
 
           <label>¿Se contactó al evaluado?</label>
           <select value={seContacto} onChange={(e) => setSeContacto(e.target.value)}>
