@@ -157,7 +157,7 @@ function Programar() {
       "Virtual": "https://forms.gle/8Z6n6g5sZ8Qv9L6m9prueba"
     };
 
-    const linkFormulario = formularios[tipoVisita] || "https://formulario.com/default";
+    const linkFormulario = formularios[tipoVisita] || null;
 
     const nuevoCaso = {
       id: casoId,
