@@ -5,7 +5,7 @@ function GestionCasos() {
   const [casos, setCasos] = useState([]);
   const [casoSeleccionado, setCasoSeleccionado] = useState(null);
   const [estado, setEstado] = useState("pendiente");
-  const [intentosContacto, setIntentosContacto] = useState(0);
+  const [intentosContacto, setIntentosContacto] = useState(1);
   const [observaciones, setObservaciones] = useState("");
   const [evidencia, setEvidencia] = useState(null);
   const [paginaActual, setPaginaActual] = useState(1);
@@ -23,7 +23,7 @@ function GestionCasos() {
   const handleSeleccionarCaso = (caso) => {
     setCasoSeleccionado(caso);
     setEstado(caso.estado);
-    setIntentosContacto(caso.intentos_contacto || 0);
+    setIntentosContacto(caso.intentos_contacto || 1);
     setObservaciones(caso.observaciones || "");
     
     setTimeout(() => {
@@ -35,6 +35,12 @@ function GestionCasos() {
     e.preventDefault();
     if (!casoSeleccionado) {
       alert("Seleccione un caso para actualizar.");
+      return;
+    }
+
+    const estadosManuales = ["cancelada por evaluado", "cancelada por VerifiK", "cancelada por Atlas", "terminada"];
+    if (!estadosManuales.includes(estado.toLowerCase())) {
+      alert("Este estado solo puede cambiarse automáticamente.");
       return;
     }
 
@@ -82,8 +88,9 @@ function GestionCasos() {
           {casosPaginados.map((caso) => (
             <div key={caso.id} className={`caso-item ${casoSeleccionado?.id === caso.id ? "seleccionado" : ""}`}
               onClick={() => handleSeleccionarCaso(caso)}>
-              <p><strong>Solicitud:</strong> {caso.solicitud}</p>  {/* ✅ Se muestra el ID de solicitud */}
+              <p><strong>Solicitud:</strong> {caso.solicitud}</p>
               <p><strong>Nombre:</strong> {caso.nombre}</p>
+              <p><strong>Empresa:</strong> {caso.cliente}</p>
               <p><strong>Estado:</strong> {caso.estado}</p>
             </div>
           ))}
@@ -97,14 +104,11 @@ function GestionCasos() {
           <div ref={detallesRef} className="panel-detalles-actualizacion">
             <div className="panel-detalles">
               <h3>Detalles del Caso Seleccionado</h3>
-              <p><strong>Solicitud:</strong> {casoSeleccionado.solicitud}</p>  {/* ✅ Aquí se muestra */}
+              <p><strong>Solicitud:</strong> {casoSeleccionado.solicitud}</p>
               <p><strong>Nombre:</strong> {casoSeleccionado.nombre}</p>
-              <p><strong>Teléfono:</strong> {casoSeleccionado.telefono}</p>
-              <p><strong>Email:</strong> {casoSeleccionado.email}</p>
-              <p><strong>Estado:</strong> {casoSeleccionado.estado}</p>
+              <p><strong>Empresa:</strong> {casoSeleccionado.cliente}</p>
               <p><strong>Intentos de Contacto:</strong> {casoSeleccionado.intentos_contacto}</p>
               <p><strong>Observaciones:</strong> {casoSeleccionado.observaciones || "Sin observaciones"}</p>
-
               <h3>Subir Evidencia</h3>
               <input type="file" onChange={(e) => setEvidencia(e.target.files[0])} />
               <button onClick={handleEvidenciaUpload} className="btn btn-evidencia">Subir Evidencia</button>
@@ -117,13 +121,17 @@ function GestionCasos() {
               <form onSubmit={handleActualizarCaso} className="form-container">
                 <label>Estado</label>
                 <select value={estado} onChange={(e) => setEstado(e.target.value)}>
-                  <option value="pendiente">Pendiente</option>
-                  <option value="en curso">En Curso</option>
-                  <option value="completado">Completado</option>
-                  <option value="standby">Standby</option>
+                  <option value="cancelada por evaluado">Cancelada por Evaluado</option>
+                  <option value="cancelada por VerifiK">Cancelada por VerifiK</option>
+                  <option value="cancelada por Atlas">Cancelada por Atlas</option>
+                  <option value="terminada">Terminada</option>
                 </select>
                 <label>Intentos de Contacto</label>
-                <input type="number" value={intentosContacto} onChange={(e) => setIntentosContacto(e.target.value)} />
+                <select value={intentosContacto} onChange={(e) => setIntentosContacto(e.target.value)}>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                </select>
                 <label>Observaciones</label>
                 <textarea value={observaciones} onChange={(e) => setObservaciones(e.target.value)} />
                 <button type="submit" className="btn btn-primary">Actualizar Caso</button>
