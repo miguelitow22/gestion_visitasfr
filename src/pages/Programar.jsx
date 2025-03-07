@@ -59,6 +59,7 @@ function Programar() {
   const [errorMensaje, setErrorMensaje] = useState("");
   const [evidencia, setEvidencia] = useState(null);
   const [ciudad, setCiudad] = useState(null);
+  const [barrio, setBarrio] = useState("");
 
   useEffect(() => {
     async function fetchCalendarUrl() {
@@ -192,7 +193,8 @@ function Programar() {
       estado: seContacto === "Sí" ? "en curso" : "pendiente",
       linkFormulario,
       regional: regional || "No aplica",
-      ciudad: ciudad || null
+      ciudad: ciudad || null,
+      barrio
     };
 
     console.log("📌 Enviando datos:", JSON.stringify(nuevoCaso, null, 2));
@@ -366,6 +368,8 @@ function Programar() {
               </select>
               <label>Ciudad:</label>
               <input type="text" value={ciudad} onChange={(e) => setCiudad(e.target.value)} required={seContacto === "Sí"} />
+              <label>Barrio:</label>
+              <input type="text" value={barrio} onChange={(e) => setBarrio(e.target.value)} required />
             </>
           ) : (
             <>
