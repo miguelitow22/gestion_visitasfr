@@ -130,6 +130,13 @@ function Programar() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+
+  if (!solicitudAtlas.trim()) {
+    alert("❌ El campo 'Solicitud' es obligatorio.");
+    return;
+  }
+
+
     if (horariosOcupados.map(normalizarHora).includes(normalizarHora(hora))) {
       alert("Este horario ya está ocupado, por favor selecciona otro.");
       return;
