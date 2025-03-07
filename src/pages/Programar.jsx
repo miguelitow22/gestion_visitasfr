@@ -5,16 +5,20 @@ import "react-datepicker/dist/react-datepicker.css";
 import { v4 as uuidv4 } from "uuid";
 
 const evaluadores = [
-  { nombre: "Jairo", correo: "jairo@empresa.com" },
-  { nombre: "Ana", correo: "ana@empresa.com" },
+  { nombre: "Jairo Lopez", correo: "jairo@empresa.com" },
+  { nombre: "Henry Medina", correo: "ana@empresa.com" },
 ];
 
 const analistas = [
-  { nombre: "Carlos", correo: "carlos@empresa.com", telefono: "+573001234567" },
-  { nombre: "María", correo: "maria@empresa.com", telefono: "+573002345678" },
+  { nombre: "Ana Isabel Aguirre", correo: "carlos@empresa.com", telefono: "+573001234567" },
+  { nombre: "Luisa Fernanda Tamayo", correo: "maria@empresa.com", telefono: "+573002345678" },
+  { nombre: "Julieth Quilindo", correo: "carlos@empresa.com", telefono: "+573001234567" },
+  { nombre: "Maritza Majin Rodríguez", correo: "maria@empresa.com", telefono: "+573002345678" },
+  { nombre: "Jairo López ", correo: "carlos@empresa.com", telefono: "+573001234567" },
+  { nombre: "Henry Medina", correo: "maria@empresa.com", telefono: "+573002345678" },
 ];
 
-const regionales = ["Norte", "Sur", "Centro"];
+const regionales = ["Antioquia", "Caribe", "Centro","Eje Cafetero","Nororiente","Occidente","Oriente"];
 const tiposVisita = [
   "Ingreso", "Seguimiento", "Virtual",
   "Ingreso Bicicletas HA", "Seguimiento Bicicletas HA",
@@ -144,12 +148,13 @@ function Programar() {
     setErrorMensaje("");
 
     const formularios = {
-      "Ingreso": "https://formulario.com/ingreso",
-      "Seguimiento": "https://formulario.com/seguimiento",
-      "Ingreso Bicicletas HA": "https://formulario.com/bicicletas-ingreso",
-      "Seguimiento Bicicletas HA": "https://formulario.com/bicicletas-seguimiento",
-      "Atlas": "https://formulario.com/atlas",
-      "Pic Colombia": "https://formulario.com/pic-colombia"
+      "Ingreso": "https://forms.gle/GdWmReVymyzQLKGn6  ",
+      "Seguimiento": "https://forms.gle/RMiHfRX1VUMCpYdQ7  ",
+      "Ingreso Bicicletas HA": "https://forms.gle/U54QxgtKBZX9u244A",
+      "Seguimiento Bicicletas HA": "https://forms.gle/GTK6Jm6c5v5HkmKp9",
+      "Atlas": "https://forms.gle/TNrQY9fhRpZWQFy56",
+      "Pic Colombia": "https://forms.gle/rrkhzfu7muDGjgZt6",
+      "Virtual": "https://forms.gle/8Z6n6g5sZ8Qv9L6m9prueba"
     };
 
     const linkFormulario = formularios[tipoVisita] || "https://formulario.com/default";
@@ -384,7 +389,7 @@ function Programar() {
               <label>¿Se volverá a contactar?</label>
               <select value={recontactar} onChange={(e) => setRecontactar(e.target.value)}>
                 <option value="Sí">Sí</option>
-                <option value="No">No</option>
+                <option value="No">No, por favor retirar esta solicitud.</option>
               </select>
               <label>Subir Evidencia:</label>
               <input type="file" onChange={(e) => setEvidencia(e.target.files[0])} />
