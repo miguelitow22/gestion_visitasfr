@@ -121,6 +121,7 @@ function GestionCasos() {
               <form onSubmit={handleActualizarCaso} className="form-container">
                 <label>Estado</label>
                 <select value={estado} onChange={(e) => setEstado(e.target.value)}>
+                  <option value="programada">Programada</option>
                   <option value="cancelada por evaluado">Cancelada por Evaluado</option>
                   <option value="cancelada por VerifiK">Cancelada por VerifiK</option>
                   <option value="cancelada por Atlas">Cancelada por Atlas</option>
