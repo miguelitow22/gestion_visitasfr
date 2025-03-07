@@ -50,6 +50,7 @@ function Programar() {
   const [puntoReferencia, setPuntoReferencia] = useState("");
   const [evaluador, setEvaluador] = useState(null);
   const [evaluadorEmail, setEvaluadorEmail] = useState(null);
+  const [evaluadorTelefono, setEvaluadorTelefono] = useState("");
   const [analista, setAnalista] = useState(null);
   const [analistaEmail, setAnalistaEmail] = useState(null);
   const [recontactar, setRecontactar] = useState("Sí");
@@ -194,7 +195,8 @@ function Programar() {
       linkFormulario,
       regional: regional || "No aplica",
       ciudad: ciudad || null,
-      barrio
+      barrio,
+      evaluador_telefono: evaluadorTelefono
     };
 
     console.log("📌 Enviando datos:", JSON.stringify(nuevoCaso, null, 2));
@@ -346,12 +348,13 @@ function Programar() {
               <input type="text" value={puntoReferencia} onChange={(e) => setPuntoReferencia(e.target.value)} />
               <label>Evaluador:</label>
               <select 
-                value={evaluador} 
+                value={evaluador}
                 onChange={(e) => {
                   setEvaluador(e.target.value);
-                  const correo = evaluadores.find(ev => ev.nombre === e.target.value)?.correo || "";
-                  setEvaluadorEmail(correo);
-                }} 
+                  const evaluadorObj = evaluadores.find(ev => ev.nombre === e.target.value);
+                  setEvaluadorEmail(evaluadorObj?.correo || "");
+                  setEvaluadorTelefono(evaluadorObj?.telefono || "");
+                }}
                 required
               >
                 <option value="">Seleccione un evaluador</option>
@@ -359,6 +362,7 @@ function Programar() {
                   <option key={index} value={ev.nombre}>{ev.nombre}</option>
                 ))}
               </select>
+
               <label>Regional:</label>
               <select value={regional} onChange={(e) => setRegional(e.target.value)} required>
                 <option value="">Seleccione una regional</option>
