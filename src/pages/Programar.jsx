@@ -5,8 +5,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { v4 as uuidv4 } from "uuid";
 
 const evaluadores = [
-  { nombre: "Jairo Lopez", correo: "jairo@empresa.com" },
-  { nombre: "Henry Medina", correo: "ana@empresa.com" },
+  { nombre: "Jairo Lopez", correo: "jairo@empresa.com", telefono: "3146249096" },
+  { nombre: "Henry Medina", correo: "ana@empresa.com", telefono: "3005679960" },
 ];
 
 const analistas = [
