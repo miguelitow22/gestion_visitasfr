@@ -5,17 +5,17 @@ import "react-datepicker/dist/react-datepicker.css";
 import { v4 as uuidv4 } from "uuid";
 
 const evaluadores = [
-  { nombre: "Jairo Lopez", correo: "jairo@empresa.com", telefono: "+573152354796"},
-  { nombre: "Henry Medina", correo: "ana@empresa.com", telefono: "+573005679960"},
+  { nombre: "Jairo Lopez", correo: "jairolo962@gmail.com", telefono: "+573152354796"},
+  { nombre: "Henry Medina", correo: "henrymedina8@gmail.com", telefono: "+573005679960"},
 ];
 
 const analistas = [
   { nombre: "Ana Isabel Aguirre", correo: "aaguirrer@atlas.com.co", telefono: "+573206779735"},
-  { nombre: "Luisa Fernanda Tamayo", correo: "maria@empresa.com", telefono: "+573145104320"},
-  { nombre: "Julieth Quilindo", correo: "carlos@empresa.com", telefono: "+573174011972"},
-  { nombre: "Maritza Majin Rodríguez", correo: "maria@empresa.com", telefono: "+573172178473"},
-  { nombre: "Jairo López ", correo: "carlos@empresa.com", telefono: "+573152354796"},
-  { nombre: "Henry Medina", correo: "maria@empresa.com", telefono: "+573005679960"},
+  { nombre: "Luisa Fernanda Tamayo", correo: "lftamayo@atlas.com.co", telefono: "+573145104320"},
+  { nombre: "Julieth Quilindo", correo: "jquilindo@atlas.com.co", telefono: "+573174011972"},
+  { nombre: "Maritza Majin Rodríguez", correo: "secinvescali3@atlas.com.co", telefono: "+573172178473"},
+  { nombre: "Jairo López ", correo: "jairolo962@gmail.com", telefono: "+573152354796 "},
+  { nombre: "Henry Medina", correo: "henrymedina8@gmail.com", telefono: "+573005679960 "},
 ];
 
 
