@@ -68,7 +68,7 @@ export async function crearCaso(datosCaso) {
                 evaluador_asignado: datosCaso.evaluador_asignado || "",
                 observaciones: datosCaso.observaciones || "",
                 barrio: datosCaso.barrio || "",
-                evaluador_telefono: evaluadorTelefono
+                evaluador_telefono: datosCaso.evaluador_telefono || ""
             }),
         });
 
