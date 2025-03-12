@@ -454,6 +454,32 @@ body {
   margin-top: 40px;
 }
 
+/* Estilos para la página de Facturación */
+.facturacion-container {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 30px;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.facturacion-title {
+  color: var(--primary-color);
+  margin-bottom: 20px;
+}
+
+.facturacion-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+
 /* Responsividad */
 @media (max-width: 1024px) {
   .panel-detalles-actualizacion {

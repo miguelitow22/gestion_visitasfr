@@ -1,4 +1,3 @@
-// src/pages/Facturacion.jsx
 import React, { useState } from "react";
 
 function Facturacion() {
@@ -35,9 +34,9 @@ function Facturacion() {
   };
 
   return (
-    <div id="facturacion-section" className="container">
-      <h2>Generar Reporte de Facturación</h2>
-      <form onSubmit={handleGenerate}>
+    <div id="facturacion-section" className="container facturacion-container">
+      <h2 className="facturacion-title">Generar Reporte de Facturación</h2>
+      <form onSubmit={handleGenerate} className="facturacion-form">
         <div className="form-group">
           <label>Fecha de Inicio:</label>
           <input
