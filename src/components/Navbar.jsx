@@ -20,6 +20,9 @@ function Navbar() {
         case "/gestion-casos":
           sectionId = "gestion-casos-section";
           break;
+        case "/facturacion":
+          sectionId = "facturacion-section";  // Nuevo caso para Facturación
+          break;
         default:
           sectionId = "";
       }
@@ -72,6 +75,15 @@ function Navbar() {
             aria-label="Gestión de casos"
           >
             GESTIÓN DE CASOS
+          </Link>
+        </li>
+        <li>
+          <Link 
+            to="/facturacion" 
+            className="nav-link"
+            aria-label="Reporte de facturación"
+          >
+            FACTURACIÓN
           </Link>
         </li>
       </ul>
