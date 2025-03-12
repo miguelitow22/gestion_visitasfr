@@ -11,9 +11,9 @@ function Facturacion() {
       return;
     }
     try {
-      const response = await fetch(
-        `/api/facturacion?startDate=${startDate}&endDate=${endDate}`
-      );
+        const response = await fetch(
+            `${import.meta.env.VITE_API_URL}/api/facturacion?startDate=${startDate}&endDate=${endDate}`
+          );
       if (!response.ok) {
         const errorData = await response.json();
         alert("Error: " + errorData.error);
