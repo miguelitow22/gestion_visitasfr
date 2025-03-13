@@ -11,6 +11,8 @@ function GestionCasos() {
   const [paginaActual, setPaginaActual] = useState(1);
   const casosPorPagina = 12;
   const detallesRef = useRef(null);
+  const [visitaDrive, setVisitaDrive] = useState("");
+
 
   useEffect(() => {
     async function fetchData() {
@@ -126,6 +128,7 @@ function GestionCasos() {
                   <option value="cancelada por VerifiK">Cancelada por VerifiK</option>
                   <option value="cancelada por Atlas">Cancelada por Atlas</option>
                   <option value="terminada">Terminada</option>
+                  <option value="subida al Drive">Subida al Drive</option>
                 </select>
                 <label>Intentos de Contacto</label>
                 <select value={intentosContacto} onChange={(e) => setIntentosContacto(e.target.value)}>
