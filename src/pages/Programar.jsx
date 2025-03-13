@@ -5,28 +5,79 @@ import "react-datepicker/dist/react-datepicker.css";
 import { v4 as uuidv4 } from "uuid";
 
 const evaluadores = [
-  { nombre: "Jairo Lopez", correo: "jairolo962@gmail.com", telefono: "+573152354796"},
-  { nombre: "Henry Medina", correo: "henrymedina8@gmail.com", telefono: "+573005679960"},
+  { nombre: "Jairo Lopez", correo: "jairolo962@gmail.com", telefono: "+573152354796" },
+  { nombre: "Henry Medina", correo: "henrymedina8@gmail.com", telefono: "+573005679960" },
 ];
 
 const analistas = [
-  { nombre: "Ana Isabel Aguirre", correo: "aaguirrer@atlas.com.co", telefono: "+573206779735"},
-  { nombre: "Luisa Fernanda Tamayo", correo: "lftamayo@atlas.com.co", telefono: "+573145104320"},
-  { nombre: "Julieth Quilindo", correo: "jquilindo@atlas.com.co", telefono: "+573174011972"},
-  { nombre: "Maritza Majin Rodríguez", correo: "secinvescali3@atlas.com.co", telefono: "+573172178473"},
-  { nombre: "Jairo López ", correo: "jairolo962@gmail.com", telefono: "+573152354796"},
-  { nombre: "Henry Medina", correo: "henrymedina8@gmail.com", telefono: "+573005679960"},
+  { nombre: "Ana Isabel Aguirre", correo: "aaguirrer@atlas.com.co", telefono: "+573206779735" },
+  { nombre: "Luisa Fernanda Tamayo", correo: "lftamayo@atlas.com.co", telefono: "+573145104320" },
+  { nombre: "Julieth Quilindo", correo: "jquilindo@atlas.com.co", telefono: "+573174011972" },
+  { nombre: "Maritza Majin Rodríguez", correo: "secinvescali3@atlas.com.co", telefono: "+573172178473" },
+  { nombre: "Jairo López ", correo: "jairolo962@gmail.com", telefono: "+573152354796" },
+  { nombre: "Henry Medina", correo: "henrymedina8@gmail.com", telefono: "+573005679960" },
 ];
 
 
-const regionales = ["Antioquia", "Caribe", "Centro","Eje Cafetero","Nororiente","Occidente","Oriente"];
+const regionales = ["Antioquia", "Caribe", "Centro", "Eje Cafetero", "Nororiente", "Occidente", "Oriente"];
 const tiposVisita = [
   "Ingreso", "Seguimiento", "Virtual",
   "Ingreso Bicicletas HA", "Seguimiento Bicicletas HA",
   "Atlas", "Pic Colombia"
 ];
 
+// Al inicio del componente, después de los demás estados:
+const municipiosViaticos = {
+  "Medellín": 0,
+  "Medellín (Belén AltaVista parte alta)": 15000,
+  "Medellín (San Antonio de Prado)": 16000,
+  "Medellín (San Cristóbal)": 10000,
+  "Medellín (Santa Elena)": 49000,
+  "Barbosa": 39000,
+  "Bello": 0,
+  "Bello (Vereda Hato Viejo)": 34000,
+  "Caldas": 20000,
+  "Copacabana": 16000,
+  "Envigado": 0,
+  "Girardota": 16000,
+  "Itagüí": 0,
+  "La Estrella": 16000,
+  "Sabaneta": 0,
+  "Amaga": 44000,
+  "Angelópolis": 44000,
+  "Arboletes": 294000,
+  "Carepa": 224000,
+  "Caucasia": 164000,
+  "Chigorodó": 214000,
+  "Cisneros": 84000,
+  "Don Matías": 84000,
+  "El Carmen de Viboral": 54000,
+  "El peñol": 74000,
+  "Entrerríos": 84000,
+  "Guarne": 34000,
+  "Jardín": 150000,
+  "La ceja": 38000,
+  "Marinilla": 68000,
+  "Puerto Berrio": 124000,
+  "Rionegro": 44000,
+  "Salgar": 114000,
+  "San Andrés de Cuerquia": 124000,
+  "San Jerónimo": 46000,
+  "San Pedro de los Milagros": 38000,
+  "San Vicente Ferrer": 44000,
+  "Santa Fe de Antioquia": 50000,
+  "Santa Rosa de Osos": 102000,
+  "Santo Domingo": 104000,
+  "Santuario": 108000,
+  "Segovia": 173000,
+  "Taraza": 194000,
+  "Turbo": 244000,
+  "Yarumal": 120000,
+};
+
+
 function Programar() {
+  const [gastosAdicionales, setGastosAdicionales] = useState("");
   const [calendarUrl, setCalendarUrl] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [calendarError, setCalendarError] = useState(false);
@@ -134,10 +185,10 @@ function Programar() {
     e.preventDefault();
 
 
-  if (!solicitudAtlas.trim()) {
-    alert("❌ El campo 'Solicitud' es obligatorio.");
-    return;
-  }
+    if (!solicitudAtlas.trim()) {
+      alert("❌ El campo 'Solicitud' es obligatorio.");
+      return;
+    }
 
 
     if (horariosOcupados.map(normalizarHora).includes(normalizarHora(hora))) {
@@ -197,7 +248,8 @@ function Programar() {
       regional: regional || "No aplica",
       ciudad: ciudad || null,
       barrio,
-      evaluador_telefono: evaluadorTelefono
+      evaluador_telefono: evaluadorTelefono,
+      gastos_adicionales: gastosAdicionales ? parseFloat(gastosAdicionales) : 0
     };
 
     console.log("📌 Enviando datos:", JSON.stringify(nuevoCaso, null, 2));
@@ -348,7 +400,7 @@ function Programar() {
               <label>Punto de Referencia:</label>
               <input type="text" value={puntoReferencia} onChange={(e) => setPuntoReferencia(e.target.value)} />
               <label>Evaluador:</label>
-              <select 
+              <select
                 value={evaluador}
                 onChange={(e) => {
                   setEvaluador(e.target.value);
@@ -371,8 +423,33 @@ function Programar() {
                   <option key={index} value={reg}>{reg}</option>
                 ))}
               </select>
+
               <label>Ciudad:</label>
-              <input type="text" value={ciudad} onChange={(e) => setCiudad(e.target.value)} required={seContacto === "Sí"} />
+              <select
+                value={ciudad || ""}
+                onChange={(e) => setCiudad(e.target.value)}
+                required={seContacto === "Sí"}
+              >
+                <option value="">Seleccione un municipio</option>
+                {Object.keys(municipiosViaticos).map((municipio) => (
+                  <option key={municipio} value={municipio}>
+                    {municipio}
+                  </option>
+                ))}
+              </select>
+              {/* Si el municipio tiene viáticos > 0, mostrar el campo de gastos adicionales */}
+              {ciudad && municipiosViaticos[ciudad] > 0 && (
+                <>
+                  <label>Gastos de adicionales:</label>
+                  <input
+                    type="number"
+                    value={gastosAdicionales}
+                    onChange={(e) => setGastosAdicionales(e.target.value)}
+                    placeholder="Ingrese el valor adicional"
+                  />
+                </>
+              )}
+
               <label>Barrio:</label>
               <input type="text" value={barrio} onChange={(e) => setBarrio(e.target.value)} required />
             </>
@@ -385,10 +462,10 @@ function Programar() {
                 <option value="3">3</option>
               </select>
               <label>Motivo de No Contacto:</label>
-              <input 
-                type="text" 
-                value={motivoNoContacto} 
-                onChange={(e) => setMotivoNoContacto(e.target.value)} 
+              <input
+                type="text"
+                value={motivoNoContacto}
+                onChange={(e) => setMotivoNoContacto(e.target.value)}
                 required={seContacto === "No"}
               />
               <label>Analista:</label>
