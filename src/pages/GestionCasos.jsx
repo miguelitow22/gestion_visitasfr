@@ -41,7 +41,7 @@ function GestionCasos() {
     }
 
     const estadosManuales = ["cancelada por evaluado", "cancelada por VerifiK", "cancelada por Atlas", "terminada","subida al Drive"];
-    if (!estadosManuales.includes(estado.toLowerCase())) {
+    if (!estadosManuales.includes(estado)) {
       alert("Este estado solo puede cambiarse automáticamente.");
       return;
     }
