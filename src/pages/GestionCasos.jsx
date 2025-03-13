@@ -40,12 +40,19 @@ function GestionCasos() {
       return;
     }
 
-    const estadosManuales = ["cancelada por evaluado", "cancelada por VerifiK", "cancelada por Atlas", "terminada","subida al Drive"];
+    const estadosManuales = [
+      "terminada",
+      "cancelada por evaluado",
+      "cancelada por VerifiK",
+      "cancelada por Atlas",
+      "subida al Drive"
+    ];
+    
     if (!estadosManuales.includes(estado)) {
       alert("Este estado solo puede cambiarse automáticamente.");
       return;
     }
-
+    
     const datosActualizados = { estado, intentos_contacto: intentosContacto, observaciones };
     try {
       await actualizarCaso(casoSeleccionado.id, datosActualizados);
