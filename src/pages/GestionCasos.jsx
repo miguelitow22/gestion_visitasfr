@@ -47,7 +47,8 @@ function GestionCasos() {
       "cancelada por evaluado",
       "cancelada por VerifiK",
       "cancelada por Atlas",
-      "subida al Drive"
+      "subida al Drive",
+      "reprogramada"
     ];
     
     if (!estadosManuales.includes(estado)) {
@@ -142,6 +143,7 @@ function GestionCasos() {
                 <option value="cancelada por Atlas">Cancelada por Atlas</option>
                 <option value="terminada">Terminada</option>
                 <option value="subida al Drive">Subida al Drive</option>
+                <option value="reprogramada">reprogramada</option>
               </select>
               <label>Observaciones</label>
               <textarea value={observaciones} onChange={(e) => setObservaciones(e.target.value)} />
