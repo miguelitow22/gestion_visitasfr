@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { obtenerCasos, actualizarCaso, subirEvidencia } from "../api";
 
 function GestionCasos() {
+  // Estados
   const [casos, setCasos] = useState([]);
   const [casoSeleccionado, setCasoSeleccionado] = useState(null);
   const [estado, setEstado] = useState("pendiente");
@@ -14,6 +15,7 @@ function GestionCasos() {
   const detallesRef = useRef(null);
   const [visitaDrive, setVisitaDrive] = useState("");
 
+  // Efectos
   useEffect(() => {
     async function fetchData() {
       const data = await obtenerCasos();
@@ -22,6 +24,7 @@ function GestionCasos() {
     fetchData();
   }, []);
 
+  // Manejo de eventos
   const handleSeleccionarCaso = (caso) => {
     setCasoSeleccionado(caso);
     setEstado(caso.estado);
@@ -68,12 +71,10 @@ function GestionCasos() {
     }
     try {
       const response = await subirEvidencia(casoSeleccionado.id, evidencia);
-      if (response && response.url) {
+      if (response?.url) {
         alert("Evidencia subida con éxito");
         setCasos(prevCasos =>
-          prevCasos.map(c =>
-            c.id === casoSeleccionado.id ? { ...c, evidencia_url: response.url } : c
-          )
+          prevCasos.map(c => c.id === casoSeleccionado.id ? { ...c, evidencia_url: response.url } : c)
         );
       } else {
         alert("Error al subir la evidencia.");
@@ -83,10 +84,12 @@ function GestionCasos() {
     }
   };
 
+  // Filtrado y paginación
   const casosFiltrados = casos.filter(caso =>
     caso.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
     caso.cliente.toLowerCase().includes(busqueda.toLowerCase()) ||
-    caso.estado.toLowerCase().includes(busqueda.toLowerCase())
+    caso.estado.toLowerCase().includes(busqueda.toLowerCase()) ||
+    caso.solicitud.toLowerCase().includes(busqueda.toLowerCase())
   );
 
   const indiceFinal = paginaActual * casosPorPagina;
