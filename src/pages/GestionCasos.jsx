@@ -50,12 +50,12 @@ function GestionCasos() {
       "subida al Drive",
       "reprogramada"
     ];
-    
+
     if (!estadosManuales.includes(estado)) {
       alert("Este estado solo puede cambiarse automáticamente.");
       return;
     }
-    
+
     const datosActualizados = { estado, intentos_contacto: intentosContacto, observaciones };
     try {
       await actualizarCaso(casoSeleccionado.id, datosActualizados);
@@ -111,6 +111,17 @@ function GestionCasos() {
               <p><strong>Nombre:</strong> {caso.nombre}</p>
               <p><strong>Empresa:</strong> {caso.cliente}</p>
               <p><strong>Estado:</strong> {caso.estado}</p>
+              {caso.fecha_visita && (
+                <p>
+                  <strong>Fecha de Visita:</strong> {caso.fecha_visita}
+                </p>
+              )}
+              {caso.hora_visita && (
+                <p>
+                  <strong>Hora de Visita:</strong> {caso.hora_visita}
+                </p>
+              )}
+
             </div>
           ))}
         </div>
@@ -125,6 +136,16 @@ function GestionCasos() {
             <p><strong>Solicitud:</strong> {casoSeleccionado.solicitud}</p>
             <p><strong>Nombre:</strong> {casoSeleccionado.nombre}</p>
             <p><strong>Empresa:</strong> {casoSeleccionado.cliente}</p>
+            {casoSeleccionado.fecha_visita && (
+              <p>
+                <strong>Fecha de Visita:</strong> {casoSeleccionado.fecha_visita}
+              </p>
+            )}
+            {casoSeleccionado.hora_visita && (
+              <p>
+                <strong>Hora de Visita:</strong> {casoSeleccionado.hora_visita}
+              </p>
+            )}
             <p><strong>Intentos de Contacto:</strong> {casoSeleccionado.intentos_contacto}</p>
             <p><strong>Observaciones:</strong> {casoSeleccionado.observaciones || "Sin observaciones"}</p>
             <h3>Subir Evidencia</h3>
