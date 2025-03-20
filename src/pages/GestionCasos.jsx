@@ -14,6 +14,8 @@ function GestionCasos() {
   const casosPorPagina = 12;
   const detallesRef = useRef(null);
   const [visitaDrive, setVisitaDrive] = useState("");
+  const [fechaReprogramacion, setFechaReprogramacion] = useState("");
+  const [horaReprogramacion, setHoraReprogramacion] = useState("");
 
   // Efectos
   useEffect(() => {
@@ -30,6 +32,8 @@ function GestionCasos() {
     setEstado(caso.estado);
     setIntentosContacto(caso.intentos_contacto || 1);
     setObservaciones(caso.observaciones || "");
+    setFechaReprogramacion(caso.fecha_visita || "");
+    setHoraReprogramacion(caso.hora_visita || "");
     setTimeout(() => {
       detallesRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 100);
@@ -56,7 +60,16 @@ function GestionCasos() {
       return;
     }
 
-    const datosActualizados = { estado, intentos_contacto: intentosContacto, observaciones };
+    const datosActualizados = { 
+      estado, 
+      intentos_contacto: intentosContacto, 
+      observaciones,
+      ...(estado === "reprogramada" && { 
+          fecha_visita: fechaReprogramacion, 
+          hora_visita: horaReprogramacion 
+      })
+    };
+
     try {
       await actualizarCaso(casoSeleccionado.id, datosActualizados);
       alert("Caso actualizado con éxito");
@@ -121,7 +134,6 @@ function GestionCasos() {
                   <strong>Hora de Visita:</strong> {caso.hora_visita}
                 </p>
               )}
-
             </div>
           ))}
         </div>
@@ -166,6 +178,24 @@ function GestionCasos() {
                 <option value="subida al Drive">Subida al Drive</option>
                 <option value="reprogramada">reprogramada</option>
               </select>
+              {estado === "reprogramada" && (
+                <>
+                  <label>Fecha de Reprogramación</label>
+                  <input
+                    type="date"
+                    value={fechaReprogramacion}
+                    onChange={(e) => setFechaReprogramacion(e.target.value)}
+                    required
+                  />
+                  <label>Hora de Reprogramación</label>
+                  <input
+                    type="time"
+                    value={horaReprogramacion}
+                    onChange={(e) => setHoraReprogramacion(e.target.value)}
+                    required
+                  />
+                </>
+              )}
               <label>Observaciones</label>
               <textarea value={observaciones} onChange={(e) => setObservaciones(e.target.value)} />
               <button type="submit" className="btn btn-primary">Actualizar Caso</button>
