@@ -11,9 +11,9 @@ function Facturacion() {
       return;
     }
     try {
-        const response = await fetch(
-            `${import.meta.env.VITE_API_URL}/api/facturacion?startDate=${startDate}&endDate=${endDate}`
-          );
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/facturacion?startDate=${startDate}&endDate=${endDate}`
+      );
       if (!response.ok) {
         const errorData = await response.json();
         alert("Error: " + errorData.error);
@@ -23,10 +23,11 @@ function Facturacion() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "facturacion.docx";
+      a.download = "facturacion.xlsx";  // Cambio de extensión
       document.body.appendChild(a);
       a.click();
       a.remove();
+
     } catch (error) {
       console.error("Error al generar el documento:", error);
       alert("Ocurrió un error al generar el documento.");
