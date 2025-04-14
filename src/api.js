@@ -66,6 +66,9 @@ export async function crearCaso(datosCaso) {
                 motivo_no_programacion: datosCaso.motivo_no_programacion || "",
                 evaluador_email: datosCaso.evaluador_email || "",
                 evaluador_asignado: datosCaso.evaluador_asignado || "",
+                // ✅ Nuevos campos para el analista
+                analista_asignado: datosCaso.analista_asignado || "",
+                analista_email: datosCaso.analista_email || "",
                 observaciones: datosCaso.observaciones || "",
                 barrio: datosCaso.barrio || "",
                 evaluador_telefono: datosCaso.evaluador_telefono || "",
@@ -103,6 +106,9 @@ export async function actualizarCaso(id, datos) {
                 intentos_contacto: datos.intentos_contacto || 0,
                 motivo_no_programacion: datos.motivo_no_programacion || "",
                 evaluador_asignado: datos.evaluador_asignado || "",
+                // ✅ Nuevos campos para el analista
+                analista_asignado: datos.analista_asignado || "",
+                analista_email: datos.analista_email || "",
                 observaciones: datos.observaciones || "",
                 barrio: datos.barrio || ""
             }),

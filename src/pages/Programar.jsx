@@ -17,7 +17,6 @@ const analistas = [
   { nombre: "Henry Medina", correo: "henrymedina8@gmail.com", telefono: "+573005679960" },
 ];
 
-
 const regionales = ["Antioquia", "Caribe", "Centro", "Eje Cafetero", "Nororiente", "Occidente", "Oriente"];
 const tiposVisita = [
   "Ingreso", "Seguimiento", "Virtual",
@@ -25,7 +24,6 @@ const tiposVisita = [
   "Atlas", "Pic Colombia"
 ];
 
-// Al inicio del componente, después de los demás estados:
 const municipiosViaticos = {
   "Medellín": 0,
   "Medellín (Belén AltaVista parte alta)": 15000,
@@ -74,8 +72,8 @@ const municipiosViaticos = {
   "Yarumal": 120000,
 };
 
-
 function Programar() {
+  // Estados generales
   const [gastosAdicionales, setGastosAdicionales] = useState("");
   const [calendarUrl, setCalendarUrl] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -91,6 +89,8 @@ function Programar() {
   const [telefonoSecundario, setTelefonoSecundario] = useState("");
   const [telefonoTerciario, setTelefonoTerciario] = useState("");
   const [email, setEmail] = useState(null);
+  
+  // Estados para manejo de la visita
   const [seContacto, setSeContacto] = useState("Sí");
   const [tipoVisita, setTipoVisita] = useState("Ingreso");
   const [intentoContacto, setIntentoContacto] = useState("1");
@@ -99,19 +99,24 @@ function Programar() {
   const [hora, setHora] = useState("10:00");
   const [direccion, setDireccion] = useState("");
   const [puntoReferencia, setPuntoReferencia] = useState("");
+  const [ciudad, setCiudad] = useState(null);
+  const [barrio, setBarrio] = useState("");
+  
+  // Estados para evaluador y analista
   const [evaluador, setEvaluador] = useState(null);
   const [evaluadorEmail, setEvaluadorEmail] = useState(null);
   const [evaluadorTelefono, setEvaluadorTelefono] = useState("");
   const [analista, setAnalista] = useState(null);
   const [analistaEmail, setAnalistaEmail] = useState(null);
+  const [analistaTelefono, setAnalistaTelefono] = useState(null);
+  
+  // Otros estados
   const [recontactar, setRecontactar] = useState("Sí");
   const [regional, setRegional] = useState(null);
   const [horariosOcupados, setHorariosOcupados] = useState([]);
   const [isCaseCreated, setIsCaseCreated] = useState(false);
   const [errorMensaje, setErrorMensaje] = useState("");
   const [evidencia, setEvidencia] = useState(null);
-  const [ciudad, setCiudad] = useState(null);
-  const [barrio, setBarrio] = useState("");
 
   useEffect(() => {
     async function fetchCalendarUrl() {
@@ -183,19 +188,18 @@ function Programar() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-
     if (!solicitudAtlas.trim()) {
       alert("❌ El campo 'Solicitud' es obligatorio.");
       return;
     }
-
 
     if (horariosOcupados.map(normalizarHora).includes(normalizarHora(hora))) {
       alert("Este horario ya está ocupado, por favor selecciona otro.");
       return;
     }
 
-    if (seContacto === "Sí" && (!evaluador || !evaluadorEmail || !regional || !fecha || !direccion || !ciudad)) {
+    // Validaciones según si se contactó o no
+    if (seContacto === "Sí" && (!evaluador || !evaluadorEmail || !regional || !fecha || !direccion || !ciudad || !analista || !analistaEmail)) {
       setErrorMensaje("❌ Faltan datos obligatorios en visitas programadas");
       return;
     }
@@ -208,8 +212,8 @@ function Programar() {
     setErrorMensaje("");
 
     const formularios = {
-      "Ingreso": "https://forms.gle/GdWmReVymyzQLKGn6  ",
-      "Seguimiento": "https://forms.gle/RMiHfRX1VUMCpYdQ7  ",
+      "Ingreso": "https://forms.gle/GdWmReVymyzQLKGn6",
+      "Seguimiento": "https://forms.gle/RMiHfRX1VUMCpYdQ7",
       "Ingreso Bicicletas HA": "https://forms.gle/U54QxgtKBZX9u244A",
       "Seguimiento Bicicletas HA": "https://forms.gle/GTK6Jm6c5v5HkmKp9",
       "Atlas": "https://forms.gle/TNrQY9fhRpZWQFy56",
@@ -233,6 +237,10 @@ function Programar() {
       email: email || null,
       evaluador_email: evaluadorEmail || null,
       evaluador_asignado: evaluador || null,
+      // Se incluye siempre la información del analista
+      analista_asignado: analista || null,
+      analista_email: analistaEmail || null,
+      analista_telefono: analistaTelefono || null,
       seContacto,
       tipo_visita: seContacto === "Sí" ? tipoVisita : "No aplica",
       intentos_contacto: seContacto === "No" ? parseInt(intentoContacto) : 0,
@@ -279,10 +287,10 @@ function Programar() {
     }
   };
 
-  // Generar opciones de hora (formato 24h)
+  // Opciones de hora (formato 24h)
   const horasDisponibles = Array.from({ length: 17 }, (_, i) => {
-    const hora = i + 6; // Rango de 6 AM a 10 PM
-    return hora < 10 ? `0${hora}` : `${hora}`;
+    const horaNum = i + 6; // Rango de 6 AM a 10 PM
+    return horaNum < 10 ? `0${horaNum}` : `${horaNum}`;
   });
 
   // Opciones de minutos
@@ -315,6 +323,7 @@ function Programar() {
         <h3>Programación</h3>
         <form className="form-container" onSubmit={handleSubmit}>
           {errorMensaje && <p style={{ color: "red" }}>{errorMensaje}</p>}
+          
           <label>Solicitud:</label>
           <input type="text" value={solicitudAtlas} onChange={(e) => setSolicitudAtlas(e.target.value)} required />
 
@@ -369,24 +378,14 @@ function Programar() {
               <DatePicker selected={fecha} onChange={(date) => setFecha(date)} minDate={new Date()} dateFormat="yyyy-MM-dd" required />
               <label>Hora:</label>
               <div className="hora-container">
-                <select
-                  value={hora.split(":")[0]}
-                  onChange={handleHoraChange}
-                  required
-                  className="time-select"
-                >
+                <select value={hora.split(":")[0]} onChange={handleHoraChange} required className="time-select">
                   <option value="">HH</option>
                   {horasDisponibles.map((h, index) => (
                     <option key={index} value={h}>{h}</option>
                   ))}
                 </select>
                 :
-                <select
-                  value={hora.split(":")[1]}
-                  onChange={handleMinutoChange}
-                  required
-                  className="time-select"
-                >
+                <select value={hora.split(":")[1]} onChange={handleMinutoChange} required className="time-select">
                   <option value="">MM</option>
                   {minutosDisponibles.map((m, index) => (
                     <option key={index} value={m}>{m}</option>
@@ -400,7 +399,7 @@ function Programar() {
               <input type="text" value={puntoReferencia} onChange={(e) => setPuntoReferencia(e.target.value)} />
               <label>Evaluador:</label>
               <select
-                value={evaluador}
+                value={evaluador || ""}
                 onChange={(e) => {
                   setEvaluador(e.target.value);
                   const evaluadorObj = evaluadores.find(ev => ev.nombre === e.target.value);
@@ -414,7 +413,6 @@ function Programar() {
                   <option key={index} value={ev.nombre}>{ev.nombre}</option>
                 ))}
               </select>
-
               <label>Regional:</label>
               <select value={regional} onChange={(e) => setRegional(e.target.value)} required>
                 <option value="">Seleccione una regional</option>
@@ -422,21 +420,13 @@ function Programar() {
                   <option key={index} value={reg}>{reg}</option>
                 ))}
               </select>
-
               <label>Ciudad:</label>
-              <select
-                value={ciudad || ""}
-                onChange={(e) => setCiudad(e.target.value)}
-                required={seContacto === "Sí"}
-              >
+              <select value={ciudad || ""} onChange={(e) => setCiudad(e.target.value)} required>
                 <option value="">Seleccione un municipio</option>
                 {Object.keys(municipiosViaticos).map((municipio) => (
-                  <option key={municipio} value={municipio}>
-                    {municipio}
-                  </option>
+                  <option key={municipio} value={municipio}>{municipio}</option>
                 ))}
               </select>
-              {/* Si el municipio tiene viáticos > 0, mostrar el campo de gastos adicionales */}
               {ciudad && municipiosViaticos[ciudad] > 0 && (
                 <>
                   <label>Gastos de adicionales:</label>
@@ -448,7 +438,6 @@ function Programar() {
                   />
                 </>
               )}
-
               <label>Barrio:</label>
               <input type="text" value={barrio} onChange={(e) => setBarrio(e.target.value)} required />
             </>
@@ -461,23 +450,7 @@ function Programar() {
                 <option value="3">3</option>
               </select>
               <label>Motivo de No Contacto:</label>
-              <input
-                type="text"
-                value={motivoNoContacto}
-                onChange={(e) => setMotivoNoContacto(e.target.value)}
-                required={seContacto === "No"}
-              />
-              <label>Analista:</label>
-              <select onChange={(e) => {
-                setAnalista(e.target.value);
-                const correo = analistas.find(a => a.nombre === e.target.value)?.correo || "";
-                setAnalistaEmail(correo);
-              }}>
-                <option value="">Seleccione un analista</option>
-                {analistas.map(a => (
-                  <option key={a.nombre} value={a.nombre}>{a.nombre}</option>
-                ))}
-              </select>
+              <input type="text" value={motivoNoContacto} onChange={(e) => setMotivoNoContacto(e.target.value)} required />
               <label>¿Se volverá a contactar?</label>
               <select value={recontactar} onChange={(e) => setRecontactar(e.target.value)}>
                 <option value="Sí">Sí</option>
@@ -487,6 +460,31 @@ function Programar() {
               <input type="file" onChange={(e) => setEvidencia(e.target.files[0])} />
             </>
           )}
+
+          {/* Campo de Analista (aparece en ambos casos) */}
+          <label>Analista:</label>
+          <select
+            value={analista || ""}
+            onChange={(e) => {
+              const selected = e.target.value;
+              setAnalista(selected);
+              const analistaObj = analistas.find(a => a.nombre === selected);
+              if (analistaObj) {
+                setAnalistaEmail(analistaObj.correo);
+                setAnalistaTelefono(analistaObj.telefono);
+              } else {
+                setAnalistaEmail(null);
+                setAnalistaTelefono(null);
+              }
+            }}
+            required
+          >
+            <option value="">Seleccione un analista</option>
+            {analistas.map(a => (
+              <option key={a.nombre} value={a.nombre}>{a.nombre}</option>
+            ))}
+          </select>
+
           <button type="submit" className="btn btn-primary">Programar Visita</button>
           {isCaseCreated && (
             <a
