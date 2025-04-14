@@ -69,6 +69,7 @@ export async function crearCaso(datosCaso) {
                 // ✅ Nuevos campos para el analista
                 analista_asignado: datosCaso.analista_asignado || "",
                 analista_email: datosCaso.analista_email || "",
+                analista_telefono: datosCaso.analista_telefono || "",
                 observaciones: datosCaso.observaciones || "",
                 barrio: datosCaso.barrio || "",
                 evaluador_telefono: datosCaso.evaluador_telefono || "",
@@ -109,6 +110,7 @@ export async function actualizarCaso(id, datos) {
                 // ✅ Nuevos campos para el analista
                 analista_asignado: datos.analista_asignado || "",
                 analista_email: datos.analista_email || "",
+                analista_telefono: datos.analista_telefono || "",
                 observaciones: datos.observaciones || "",
                 barrio: datos.barrio || ""
             }),
