@@ -116,6 +116,7 @@ function Programar() {
   const [horariosOcupados, setHorariosOcupados] = useState([]);
   const [isCaseCreated, setIsCaseCreated] = useState(false);
   const [errorMensaje, setErrorMensaje] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false); // para evitar doble envío
   const [evidencia, setEvidencia] = useState(null);
 
   useEffect(() => {
@@ -188,24 +189,32 @@ function Programar() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Evitar doble envío:
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
     if (!solicitudAtlas.trim()) {
       alert("❌ El campo 'Solicitud' es obligatorio.");
+      setIsSubmitting(false);
       return;
     }
 
     if (horariosOcupados.map(normalizarHora).includes(normalizarHora(hora))) {
       alert("Este horario ya está ocupado, por favor selecciona otro.");
+      setIsSubmitting(false);
       return;
     }
 
     // Validaciones según si se contactó o no
     if (seContacto === "Sí" && (!evaluador || !evaluadorEmail || !regional || !fecha || !direccion || !ciudad || !analista || !analistaEmail)) {
       setErrorMensaje("❌ Faltan datos obligatorios en visitas programadas");
+      setIsSubmitting(false);
       return;
     }
 
     if (seContacto === "No" && (!intentoContacto || !motivoNoContacto || !analista || !analistaEmail)) {
       setErrorMensaje("❌ Faltan datos para visitas no contactadas");
+      setIsSubmitting(false);
       return;
     }
 
@@ -237,7 +246,7 @@ function Programar() {
       email: email || null,
       evaluador_email: evaluadorEmail || null,
       evaluador_asignado: evaluador || null,
-      // Se incluye siempre la información del analista
+      // Campos para el analista
       analista_asignado: analista || null,
       analista_email: analistaEmail || null,
       analista_telefono: analistaTelefono || null,
@@ -284,6 +293,8 @@ function Programar() {
     } catch (error) {
       console.error("❌ Error al enviar el caso:", error);
       alert("❌ Error en el servidor. Verifica la consola.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -315,7 +326,16 @@ function Programar() {
         ) : calendarError ? (
           <p style={{ color: "red" }}>No se pudo cargar el calendario.</p>
         ) : (
-          <iframe src={calendarUrl} title="Calendario" style={{ border: 0, width: "100%", height: "400px", borderRadius: "12px" }}></iframe>
+          <iframe
+            src={calendarUrl}
+            title="Calendario"
+            style={{
+              border: 0,
+              width: "100%",
+              height: "400px",
+              borderRadius: "12px",
+            }}
+          ></iframe>
         )}
       </section>
 
@@ -461,7 +481,7 @@ function Programar() {
             </>
           )}
 
-          {/* Campo de Analista (aparece en ambos casos) */}
+          {/* Campo de Analista */}
           <label>Analista:</label>
           <select
             value={analista || ""}
@@ -472,9 +492,15 @@ function Programar() {
               if (analistaObj) {
                 setAnalistaEmail(analistaObj.correo);
                 setAnalistaTelefono(analistaObj.telefono);
+                console.log("Analista seleccionado:", {
+                  analista: selected,
+                  analistaEmail: analistaObj.correo,
+                  analistaTelefono: analistaObj.telefono
+                });
               } else {
                 setAnalistaEmail(null);
                 setAnalistaTelefono(null);
+                console.log("Analista seleccionado es vacío");
               }
             }}
             required
@@ -485,7 +511,9 @@ function Programar() {
             ))}
           </select>
 
-          <button type="submit" className="btn btn-primary">Programar Visita</button>
+          <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+            {isSubmitting ? "Enviando..." : "Programar Visita"}
+          </button>
           {isCaseCreated && (
             <a
               href={generarEnlaceGoogleCalendar(seContacto === "Sí" ? "programado" : "pendiente")}
