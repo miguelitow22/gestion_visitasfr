@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { obtenerCasos, actualizarCaso, subirEvidencia } from "../api";
 
-function GestionCasos() {
-  // Estados
+export default function GestionCasos() {
   const [casos, setCasos] = useState([]);
   const [casoSeleccionado, setCasoSeleccionado] = useState(null);
   const [estado, setEstado] = useState("pendiente");
@@ -11,22 +10,20 @@ function GestionCasos() {
   const [evidencia, setEvidencia] = useState(null);
   const [paginaActual, setPaginaActual] = useState(1);
   const [busqueda, setBusqueda] = useState("");
-  const casosPorPagina = 12;
   const detallesRef = useRef(null);
   const [fechaReprogramacion, setFechaReprogramacion] = useState("");
   const [horaReprogramacion, setHoraReprogramacion] = useState("");
 
   // Carga inicial de casos
   useEffect(() => {
-    async function fetchData() {
+    (async () => {
       try {
         const data = await obtenerCasos();
         setCasos(data);
-      } catch (error) {
-        console.error("Error cargando casos:", error);
+      } catch (err) {
+        console.error("Error al cargar casos:", err);
       }
-    }
-    fetchData();
+    })();
   }, []);
 
   // Selección de caso
@@ -37,249 +34,255 @@ function GestionCasos() {
     setObservaciones(caso.observaciones || "");
     setFechaReprogramacion(caso.fecha_visita || "");
     setHoraReprogramacion(caso.hora_visita || "");
-    setTimeout(() => {
-      detallesRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 100);
+    setTimeout(() => detallesRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
   };
 
-  // Actualización de caso
+  // Actualizar caso
   const handleActualizarCaso = async (e) => {
     e.preventDefault();
-    if (!casoSeleccionado) {
-      alert("Seleccione un caso para actualizar.");
-      return;
-    }
-    const estadosManuales = [
+    if (!casoSeleccionado) return alert("Seleccione un caso primero.");
+    const manual = [
       "terminada",
       "cancelada por evaluado",
       "cancelada por VerifiK",
       "cancelada por Atlas",
       "subida al Drive",
-      "reprogramada",
+      "reprogramada"
     ];
-    if (!estadosManuales.includes(estado)) {
-      alert("Este estado solo puede cambiarse automáticamente.");
-      return;
-    }
-    const datosActualizados = {
+    if (!manual.includes(estado)) return alert("Estado solo manual.");
+
+    const datos = {
       estado,
       intentos_contacto: intentosContacto,
       observaciones,
       ...(estado === "reprogramada" && {
         fecha_visita: fechaReprogramacion,
-        hora_visita: horaReprogramacion,
-      }),
+        hora_visita: horaReprogramacion
+      })
     };
     try {
-      await actualizarCaso(casoSeleccionado.id, datosActualizados);
-      alert("Caso actualizado con éxito");
-      // Reflejar cambios en la lista y en el detalle
+      await actualizarCaso(casoSeleccionado.id, datos);
+      alert("Caso actualizado");
       setCasos(prev =>
-        prev.map(c =>
-          c.id === casoSeleccionado.id ? { ...c, ...datosActualizados } : c
-        )
+        prev.map(c => (c.id === casoSeleccionado.id ? { ...c, ...datos } : c))
       );
-      setCasoSeleccionado(prev => ({ ...prev, ...datosActualizados }));
-    } catch (error) {
-      console.error(error);
-      alert("Hubo un error al actualizar el caso.");
+      setCasoSeleccionado(prev => ({ ...prev, ...datos }));
+    } catch {
+      alert("Error al actualizar.");
     }
   };
 
   // Subir evidencia
   const handleEvidenciaUpload = async () => {
-    if (!casoSeleccionado || !evidencia) {
-      alert("Debe seleccionar un caso y un archivo antes de subir la evidencia.");
-      return;
-    }
+    if (!casoSeleccionado || !evidencia) return alert("Seleccione caso y archivo.");
     try {
-      const response = await subirEvidencia(casoSeleccionado.id, evidencia);
-      if (response?.url) {
-        alert("Evidencia subida con éxito");
+      const res = await subirEvidencia(casoSeleccionado.id, evidencia);
+      if (res.url) {
+        alert("Evidencia subida");
         setCasos(prev =>
           prev.map(c =>
-            c.id === casoSeleccionado.id ? { ...c, evidencia_url: response.url } : c
+            c.id === casoSeleccionado.id ? { ...c, evidencia_url: res.url } : c
           )
         );
-        setCasoSeleccionado(prev => ({ ...prev, evidencia_url: response.url }));
+        setCasoSeleccionado(prev => ({ ...prev, evidencia_url: res.url }));
       } else {
-        alert("Error al subir la evidencia.");
+        alert("Fallo al subir.");
       }
-    } catch (error) {
-      console.error(error);
-      alert("Hubo un error al subir la evidencia.");
+    } catch {
+      alert("Error en subida.");
     }
   };
 
   // Filtrado y paginación
-  const casosFiltrados = casos.filter(caso =>
-    caso.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-    caso.cliente.toLowerCase().includes(busqueda.toLowerCase()) ||
-    caso.estado.toLowerCase().includes(busqueda.toLowerCase()) ||
-    caso.solicitud.toLowerCase().includes(busqueda.toLowerCase())
+  const filtrados = casos.filter(c =>
+    [c.nombre, c.cliente, c.estado, c.solicitud].some(field =>
+      field?.toLowerCase().includes(busqueda.toLowerCase())
+    )
   );
-  const indiceFinal = paginaActual * casosPorPagina;
-  const indiceInicial = indiceFinal - casosPorPagina;
-  const casosPaginados = casosFiltrados.slice(indiceInicial, indiceFinal);
+  const start = (paginaActual - 1) * 12;
+  const paginados = filtrados.slice(start, start + 12);
 
   return (
-    <div id="gestion-casos-section" className="container gestion-casos-container">
+    <div className="gestion-casos-container">
       <h2>Gestión de Casos</h2>
       <input
-        type="text"
-        placeholder="Buscar caso..."
+        className="buscador-casos"
+        placeholder="Buscar…"
         value={busqueda}
         onChange={e => setBusqueda(e.target.value)}
-        className="buscador-casos"
       />
 
-      <div className="panel-casos">
-        <h3>Casos Registrados</h3>
-        <div className="casos-lista">
-          {casosPaginados.map(caso => (
+      <div className="lista-y-detalle">
+        <aside className="lista-casos">
+          {paginados.map(caso => (
             <div
               key={caso.id}
-              className={`caso-item ${
-                casoSeleccionado?.id === caso.id ? "seleccionado" : ""
-              }`}
+              className={"caso-item " + (casoSeleccionado?.id === caso.id ? "sel" : "")}
               onClick={() => handleSeleccionarCaso(caso)}
             >
-              <p><strong>Solicitud:</strong> {caso.solicitud}</p>
-              <p><strong>Nombre:</strong> {caso.nombre}</p>
-              <p><strong>Empresa:</strong> {caso.cliente}</p>
-              <p><strong>Estado:</strong> {caso.estado}</p>
-              {caso.fecha_visita && (
-                <p><strong>Fecha de Visita:</strong> {caso.fecha_visita}</p>
-              )}
-              {caso.hora_visita && (
-                <p><strong>Hora de Visita:</strong> {caso.hora_visita}</p>
-              )}
+              <p>
+                <strong>{caso.solicitud}</strong> - {caso.nombre}
+              </p>
+              <small>
+                {caso.cliente} | {caso.estado}
+              </small>
             </div>
           ))}
-        </div>
-        <div className="paginacion">
-          <button
-            onClick={() => setPaginaActual(paginaActual - 1)}
-            disabled={paginaActual === 1}
-          >Anterior</button>
-          <span>Página {paginaActual}</span>
-          <button
-            onClick={() => setPaginaActual(paginaActual + 1)}
-            disabled={indiceFinal >= casosFiltrados.length}
-          >Siguiente</button>
-        </div>
+          <div className="paginacion">
+            <button disabled={paginaActual === 1} onClick={() => setPaginaActual(p => p - 1)}>
+              «
+            </button>
+            <span>
+              {paginaActual}/{Math.ceil(filtrados.length / 12)}
+            </span>
+            <button
+              disabled={start + 12 >= filtrados.length}
+              onClick={() => setPaginaActual(p => p + 1)}
+            >
+              »
+            </button>
+          </div>
+        </aside>
 
         {casoSeleccionado && (
-          <div ref={detallesRef} className="panel-detalles-actualizacion">
-            <h3>Detalles del Caso Seleccionado</h3>
-            <p><strong>Solicitud:</strong> {casoSeleccionado.solicitud}</p>
-            <p><strong>Nombre:</strong> {casoSeleccionado.nombre}</p>
-            <p><strong>Empresa:</strong> {casoSeleccionado.cliente}</p>
-            {casoSeleccionado.fecha_visita && (
-              <p><strong>Fecha de Visita:</strong> {casoSeleccionado.fecha_visita}</p>
-            )}
-            {casoSeleccionado.hora_visita && (
-              <p><strong>Hora de Visita:</strong> {casoSeleccionado.hora_visita}</p>
-            )}
-            <p><strong>Intentos de Contacto:</strong> {casoSeleccionado.intentos_contacto}</p>
-            <p><strong>Observaciones:</strong> {casoSeleccionado.observaciones || "Sin observaciones"}</p>
+          <main className="detalle-caso" ref={detallesRef}>
+            <h3>
+              #{casoSeleccionado.solicitud} - {casoSeleccionado.nombre}
+            </h3>
 
-            {/* Datos Adicionales */}
-            {casoSeleccionado.analista_asignado && (
-              <p><strong>Analista Asignado:</strong> {casoSeleccionado.analista_asignado}</p>
-            )}
-            {casoSeleccionado.direccion && (
-              <p><strong>Dirección:</strong> {casoSeleccionado.direccion}</p>
-            )}
-            {casoSeleccionado.barrio && (
-              <p><strong>Barrio:</strong> {casoSeleccionado.barrio}</p>
-            )}
-            {casoSeleccionado.punto_referencia && (
-              <p><strong>Punto de Ref.:</strong> {casoSeleccionado.punto_referencia}</p>
-            )}
-            {casoSeleccionado.viaticos != null && (
+            <section className="detalle-seccion">
+              <h4>Información General</h4>
               <p>
-                <strong>Viáticos:</strong> ${casoSeleccionado.viaticos.toLocaleString()}
+                <strong>Cliente:</strong> {casoSeleccionado.cliente}
               </p>
-            )}
-            {casoSeleccionado.gastos_adicionales > 0 && (
               <p>
-                <strong>Gastos Adicionales:</strong> ${casoSeleccionado.gastos_adicionales.toLocaleString()}
+                <strong>Estado:</strong> {casoSeleccionado.estado}
               </p>
-            )}
-            {casoSeleccionado.telefonosecundario && (
-              <p><strong>Tel. Secundario:</strong> {casoSeleccionado.telefonosecundario}</p>
-            )}
-            {casoSeleccionado.telefonoterciario && (
-              <p><strong>Tel. Terciario:</strong> {casoSeleccionado.telefonoterciario}</p>
-            )}
-            {casoSeleccionado.evaluador_email && (
-              <p><strong>Email Evaluador:</strong> {casoSeleccionado.evaluador_email}</p>
-            )}
-            {casoSeleccionado.analista_email && (
-              <p><strong>Email Analista:</strong> {casoSeleccionado.analista_email}</p>
-            )}
-            {casoSeleccionado.analista_telefono && (
-              <p><strong>Tel. Analista:</strong> {casoSeleccionado.analista_telefono}</p>
-            )}
+            </section>
 
-            <h3>Subir Evidencia</h3>
-            <input type="file" onChange={e => setEvidencia(e.target.files[0])} />
-            <button onClick={handleEvidenciaUpload} className="btn btn-evidencia">
-              Subir Evidencia
-            </button>
-            {casoSeleccionado.evidencia_url && (
+            <section className="detalle-seccion">
+              <h4>Datos de Contacto</h4>
               <p>
-                📂 <a href={casoSeleccionado.evidencia_url} target="_blank" rel="noopener noreferrer">
-                  Ver Evidencia
-                </a>
+                <strong>Intentos:</strong> {casoSeleccionado.intentos_contacto}
               </p>
-            )}
+              <p>
+                <strong>Observaciones:</strong> {casoSeleccionado.observaciones || "-"}
+              </p>
+            </section>
 
-            <h3>Actualizar Caso</h3>
-            <form onSubmit={handleActualizarCaso} className="form-container">
-              <label>Estado</label>
-              <select value={estado} onChange={e => setEstado(e.target.value)}>
-                <option value="programada">Programada</option>
-                <option value="cancelada por evaluado">Cancelada por Evaluado</option>
-                <option value="cancelada por VerifiK">Cancelada por VerifiK</option>
-                <option value="cancelada por Atlas">Cancelada por Atlas</option>
-                <option value="terminada">Terminada</option>
-                <option value="subida al Drive">Subida al Drive</option>
-                <option value="reprogramada">Reprogramada</option>
-              </select>
-              {estado === "reprogramada" && (
-                <>
-                  <label>Fecha de Reprogramación</label>
-                  <input
-                    type="date"
-                    value={fechaReprogramacion}
-                    onChange={e => setFechaReprogramacion(e.target.value)}
-                    required
-                  />
-                  <label>Hora de Reprogramación</label>
-                  <input
-                    type="time"
-                    value={horaReprogramacion}
-                    onChange={e => setHoraReprogramacion(e.target.value)}
-                    required
-                  />
-                </>
-              )}
-              <label>Observaciones</label>
-              <textarea
-                value={observaciones}
-                onChange={e => setObservaciones(e.target.value)}
+            <section className="detalle-seccion">
+              <h4>Analista Asignado</h4>
+              <p>
+                <strong>Nombre:</strong> {casoSeleccionado.analista_asignado || "-"}
+              </p>
+              <p>
+                <strong>Email:</strong> {casoSeleccionado.analista_email || "-"}
+              </p>
+              <p>
+                <strong>Teléfono:</strong> {casoSeleccionado.analista_telefono || "-"}
+              </p>
+            </section>
+
+            <section className="detalle-seccion">
+              <h4>Dirección y Ubicación</h4>
+              <p>
+                <strong>Dirección:</strong> {casoSeleccionado.direccion || "-"}
+              </p>
+              <p>
+                <strong>Barrio:</strong> {casoSeleccionado.barrio || "-"}
+              </p>
+              <p>
+                <strong>Punto Ref.:</strong> {casoSeleccionado.punto_referencia || "-"}
+              </p>
+            </section>
+
+            <section className="detalle-seccion">
+              <h4>Viáticos y Gastos</h4>
+              <p>
+                <strong>Viáticos:</strong> $
+                {casoSeleccionado.viaticos?.toLocaleString() || 0}
+              </p>
+              <p>
+                <strong>Gastos Ad.:</strong> $
+                {casoSeleccionado.gastos_adicionales?.toLocaleString() || 0}
+              </p>
+            </section>
+
+            <section className="detalle-seccion">
+              <h4>Visita Programada</h4>
+              <p>
+                <strong>Fecha:</strong> {casoSeleccionado.fecha_visita || "-"}
+              </p>
+              <p>
+                <strong>Hora:</strong> {casoSeleccionado.hora_visita || "-"}
+              </p>
+            </section>
+
+            <section className="detalle-seccion">
+              <h4>Evidencia</h4>
+              <input
+                type="file"
+                onChange={e => setEvidencia(e.target.files[0])}
               />
-              <button type="submit" className="btn btn-primary">
-                Actualizar Caso
-              </button>
-            </form>
-          </div>
+              <button onClick={handleEvidenciaUpload}>Subir</button>
+              {casoSeleccionado.evidencia_url && (
+                <p>
+                  <a
+                    href={casoSeleccionado.evidencia_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Ver Evidencia
+                  </a>
+                </p>
+              )}
+            </section>
+
+            <section className="detalle-seccion">
+              <h4>Actualizar Caso</h4>
+              <form onSubmit={handleActualizarCaso}>
+                <label>Estado</label>
+                <select
+                  value={estado}
+                  onChange={e => setEstado(e.target.value)}
+                >
+                  <option>programada</option>
+                  <option>cancelada por evaluado</option>
+                  <option>cancelada por VerifiK</option>
+                  <option>cancelada por Atlas</option>
+                  <option>terminada</option>
+                  <option>subida al Drive</option>
+                  <option>reprogramada</option>
+                </select>
+                {estado === "reprogramada" && (
+                  <>
+                    <label>Fecha</label>
+                    <input
+                      type="date"
+                      value={fechaReprogramacion}
+                      onChange={e => setFechaReprogramacion(e.target.value)}
+                      required
+                    />
+                    <label>Hora</label>
+                    <input
+                      type="time"
+                      value={horaReprogramacion}
+                      onChange={e => setHoraReprogramacion(e.target.value)}
+                      required
+                    />
+                  </>
+                )}
+                <label>Observaciones</label>
+                <textarea
+                  value={observaciones}
+                  onChange={e => setObservaciones(e.target.value)}
+                />
+                <button type="submit">Actualizar</button>
+              </form>
+            </section>
+          </main>
         )}
       </div>
     </div>
   );
 }
-
-export default GestionCasos;
