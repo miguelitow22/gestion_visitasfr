@@ -4,38 +4,54 @@ import { obtenerCasos, actualizarCaso, subirEvidencia } from "../api";
 export default function GestionCasos() {
   // Estados
   const [casos, setCasos] = useState([]);
+  const [cargando, setCargando] = useState(true);
   const [casoSeleccionado, setCasoSeleccionado] = useState(null);
   const [estado, setEstado] = useState("pendiente");
   const [intentosContacto, setIntentosContacto] = useState(1);
   const [observaciones, setObservaciones] = useState("");
+  const [fechaReprogramacion, setFechaReprogramacion] = useState("");
+  const [horaReprogramacion, setHoraReprogramacion] = useState("");
   const [evidencia, setEvidencia] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [paginaActual, setPaginaActual] = useState(1);
   const [busqueda, setBusqueda] = useState("");
   const detallesRef = useRef(null);
-  const [fechaReprogramacion, setFechaReprogramacion] = useState("");
-  const [horaReprogramacion, setHoraReprogramacion] = useState("");
+
+  // Estados permitidos para cambio manual
+  const estadosManuales = [
+    "programada",
+    "terminada",
+    "cancelada por evaluado",
+    "cancelada por VerifiK",
+    "cancelada por Atlas",
+    "subida al Drive",
+    "reprogramada",
+  ];
 
   // Carga inicial de casos
   useEffect(() => {
-    (async () => {
+    const fetchCasos = async () => {
       try {
         const data = await obtenerCasos();
         setCasos(data);
       } catch (err) {
         console.error("Error al cargar casos:", err);
+      } finally {
+        setCargando(false);
       }
-    })();
+    };
+    fetchCasos();
   }, []);
 
-  // Al seleccionar un caso
+  // Seleccionar un caso
   const handleSeleccionarCaso = (caso) => {
     setCasoSeleccionado(caso);
-    setEstado(caso.estado);
+    setEstado(caso.estado || estadosManuales[0]);
     setIntentosContacto(caso.intentos_contacto || 1);
     setObservaciones(caso.observaciones || "");
     setFechaReprogramacion(caso.fecha_visita || "");
     setHoraReprogramacion(caso.hora_visita || "");
-    // Scroll al panel de detalles
     setTimeout(() => {
       detallesRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 100);
@@ -44,20 +60,11 @@ export default function GestionCasos() {
   // Actualizar datos del caso
   const handleActualizarCaso = async (e) => {
     e.preventDefault();
-    if (!casoSeleccionado) return alert("Seleccione un caso primero.");
-
-    const estadosManuales = [
-      "terminada",
-      "cancelada por evaluado",
-      "cancelada por VerifiK",
-      "cancelada por Atlas",
-      "subida al Drive",
-      "reprogramada",
-    ];
+    if (!casoSeleccionado) return;
     if (!estadosManuales.includes(estado)) {
-      return alert("Este estado solo puede cambiarse manualmente.");
+      alert("Este estado solo puede cambiarse manualmente.");
+      return;
     }
-
     const datosActualizados = {
       estado,
       intentos_contacto: intentosContacto,
@@ -67,50 +74,53 @@ export default function GestionCasos() {
         hora_visita: horaReprogramacion,
       }),
     };
-
+    setIsUpdating(true);
     try {
       await actualizarCaso(casoSeleccionado.id, datosActualizados);
-      alert("Caso actualizado con éxito");
-      // Reflejar cambios en lista y detalle
-      setCasos((prev) =>
-        prev.map((c) =>
+      setCasos(prev =>
+        prev.map(c =>
           c.id === casoSeleccionado.id ? { ...c, ...datosActualizados } : c
         )
       );
-      setCasoSeleccionado((prev) => ({ ...prev, ...datosActualizados }));
+      setCasoSeleccionado(prev => ({ ...prev, ...datosActualizados }));
+      alert("Caso actualizado con éxito");
     } catch (err) {
       console.error(err);
       alert("Hubo un error al actualizar el caso.");
+    } finally {
+      setIsUpdating(false);
     }
   };
 
   // Subir evidencia
   const handleEvidenciaUpload = async () => {
-    if (!casoSeleccionado || !evidencia) {
-      return alert("Seleccione un caso y un archivo.");
-    }
+    if (!casoSeleccionado || !evidencia) return;
+    setIsUploading(true);
     try {
       const res = await subirEvidencia(casoSeleccionado.id, evidencia);
       if (res.url) {
-        alert("Evidencia subida con éxito");
-        setCasos((prev) =>
-          prev.map((c) =>
+        setCasos(prev =>
+          prev.map(c =>
             c.id === casoSeleccionado.id ? { ...c, evidencia_url: res.url } : c
           )
         );
-        setCasoSeleccionado((prev) => ({ ...prev, evidencia_url: res.url }));
+        setCasoSeleccionado(prev => ({ ...prev, evidencia_url: res.url }));
+        alert("Evidencia subida con éxito");
       } else {
         alert("Error al subir la evidencia.");
       }
-    } catch {
+    } catch (err) {
+      console.error("Error en la subida:", err);
       alert("Error en la subida.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
   // Filtrado y paginación
   const casosFiltrados = casos.filter((c) =>
-    [c.nombre, c.cliente, c.estado, c.solicitud].some((campo) =>
-      campo?.toLowerCase().includes(busqueda.toLowerCase())
+    [c.nombre, c.cliente, c.estado, c.solicitud].some((field) =>
+      field?.toLowerCase().includes(busqueda.toLowerCase())
     )
   );
   const inicio = (paginaActual - 1) * 12;
@@ -119,8 +129,6 @@ export default function GestionCasos() {
   return (
     <div className="container gestion-casos-container">
       <h2>Gestión de Casos</h2>
-
-      {/* Buscador */}
       <input
         type="text"
         placeholder="Buscar caso..."
@@ -130,25 +138,28 @@ export default function GestionCasos() {
       />
 
       <div className="panel-casos">
-        {/* Lista de Casos */}
         <aside className="casos-lista">
           <h3>Casos Registrados</h3>
-          {casosPaginados.map((caso) => (
-            <div
-              key={caso.id}
-              className={`caso-item ${casoSeleccionado?.id === caso.id ? "seleccionado" : ""}`}
-              onClick={() => handleSeleccionarCaso(caso)}
-            >
-              <p>
-                <strong>{caso.solicitud}</strong> — {caso.nombre}
-              </p>
-              <small>
-                {caso.cliente} | {caso.estado}
-              </small>
-            </div>
-          ))}
-
-          {/* Paginación */}
+          {cargando ? (
+            <p>Cargando casos...</p>
+          ) : (
+            casosPaginados.map((caso) => (
+              <div
+                key={caso.id}
+                className={`caso-item ${
+                  casoSeleccionado?.id === caso.id ? "seleccionado" : ""
+                }`}
+                onClick={() => handleSeleccionarCaso(caso)}
+              >
+                <p>
+                  <strong>{caso.solicitud}</strong> — {caso.nombre}
+                </p>
+                <small>
+                  {caso.cliente} | {caso.estado}
+                </small>
+              </div>
+            ))
+          )}
           <div className="paginacion">
             <button
               onClick={() => setPaginaActual((p) => Math.max(p - 1, 1))}
@@ -168,14 +179,15 @@ export default function GestionCasos() {
           </div>
         </aside>
 
-        {/* Panel Detalle */}
         {casoSeleccionado && (
-          <main className="panel-detalles-actualizacion" ref={detallesRef}>
+          <main
+            className="panel-detalles-actualizacion"
+            ref={detallesRef}
+          >
             <h3>
               Caso {casoSeleccionado.solicitud}: {casoSeleccionado.nombre}
             </h3>
 
-            {/* Información General */}
             <section className="detalle-seccion">
               <h4>Información General</h4>
               <p>
@@ -186,7 +198,6 @@ export default function GestionCasos() {
               </p>
             </section>
 
-            {/* Contacto */}
             <section className="detalle-seccion">
               <h4>Contacto</h4>
               <p>
@@ -198,35 +209,37 @@ export default function GestionCasos() {
               </p>
             </section>
 
-            {/* Analista Asignado */}
             <section className="detalle-seccion">
               <h4>Analista Asignado</h4>
               <p>
-                <strong>Nombre:</strong> {casoSeleccionado.analista_asignado || "—"}
+                <strong>Nombre:</strong>{" "}
+                {casoSeleccionado.analista_asignado || "—"}
               </p>
               <p>
-                <strong>Email:</strong> {casoSeleccionado.analista_email || "—"}
+                <strong>Email:</strong>{" "}
+                {casoSeleccionado.analista_email || "—"}
               </p>
               <p>
-                <strong>Teléfono:</strong> {casoSeleccionado.analista_telefono || "—"}
+                <strong>Teléfono:</strong>{" "}
+                {casoSeleccionado.analista_telefono || "—"}
               </p>
             </section>
 
-            {/* Ubicación */}
             <section className="detalle-seccion">
               <h4>Ubicación</h4>
               <p>
-                <strong>Dirección:</strong> {casoSeleccionado.direccion || "—"}
+                <strong>Dirección:</strong>{" "}
+                {casoSeleccionado.direccion || "—"}
               </p>
               <p>
                 <strong>Barrio:</strong> {casoSeleccionado.barrio || "—"}
               </p>
               <p>
-                <strong>Punto Ref.:</strong> {casoSeleccionado.punto_referencia || "—"}
+                <strong>Punto Ref.:</strong>{" "}
+                {casoSeleccionado.punto_referencia || "—"}
               </p>
             </section>
 
-            {/* Viáticos */}
             <section className="detalle-seccion">
               <h4>Viáticos y Gastos</h4>
               <p>
@@ -239,7 +252,6 @@ export default function GestionCasos() {
               </p>
             </section>
 
-            {/* Visita Programada */}
             <section className="detalle-seccion">
               <h4>Visita Programada</h4>
               <p>
@@ -250,14 +262,15 @@ export default function GestionCasos() {
               </p>
             </section>
 
-            {/* Evidencia */}
             <section className="detalle-seccion">
               <h4>Evidencia</h4>
               <input
                 type="file"
                 onChange={(e) => setEvidencia(e.target.files[0])}
               />
-              <button onClick={handleEvidenciaUpload}>Subir Evidencia</button>
+              <button onClick={handleEvidenciaUpload} disabled={isUploading}>
+                {isUploading ? "Subiendo..." : "Subir Evidencia"}
+              </button>
               {casoSeleccionado.evidencia_url && (
                 <p>
                   <a
@@ -271,7 +284,6 @@ export default function GestionCasos() {
               )}
             </section>
 
-            {/* Formulario Actualización */}
             <section className="detalle-seccion">
               <h4>Actualizar Caso</h4>
               <form onSubmit={handleActualizarCaso}>
@@ -280,13 +292,11 @@ export default function GestionCasos() {
                   value={estado}
                   onChange={(e) => setEstado(e.target.value)}
                 >
-                  <option>programada</option>
-                  <option>cancelada por evaluado</option>
-                  <option>cancelada por VerifiK</option>
-                  <option>cancelada por Atlas</option>
-                  <option>terminada</option>
-                  <option>subida al Drive</option>
-                  <option>reprogramada</option>
+                  {estadosManuales.map((est) => (
+                    <option key={est} value={est}>
+                      {est}
+                    </option>
+                  ))}
                 </select>
 
                 {estado === "reprogramada" && (
@@ -295,14 +305,18 @@ export default function GestionCasos() {
                     <input
                       type="date"
                       value={fechaReprogramacion}
-                      onChange={(e) => setFechaReprogramacion(e.target.value)}
+                      onChange={(e) =>
+                        setFechaReprogramacion(e.target.value)
+                      }
                       required
                     />
                     <label>Hora de Reprogramación</label>
                     <input
                       type="time"
                       value={horaReprogramacion}
-                      onChange={(e) => setHoraReprogramacion(e.target.value)}
+                      onChange={(e) =>
+                        setHoraReprogramacion(e.target.value)
+                      }
                       required
                     />
                   </>
@@ -314,7 +328,9 @@ export default function GestionCasos() {
                   onChange={(e) => setObservaciones(e.target.value)}
                 />
 
-                <button type="submit">Actualizar Caso</button>
+                <button type="submit" disabled={isUpdating}>
+                  {isUpdating ? "Actualizando..." : "Actualizar Caso"}
+                </button>
               </form>
             </section>
           </main>
