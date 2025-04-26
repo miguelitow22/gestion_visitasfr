@@ -1,6 +1,11 @@
-// api.js
+// src/api.js
 
-import { API_BASE_URL } from './config'; // Ajusta la ruta según tu proyecto
+/**
+ * Base URL de la API, tomado de las variables de entorno de Vite.
+ * Asegúrate de tener VITE_API_URL definida en tu .env
+ * Ejemplo: VITE_API_URL=https://tu-backend.com
+ */
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 /**
  * Expresión regular para validar correos electrónicos.
