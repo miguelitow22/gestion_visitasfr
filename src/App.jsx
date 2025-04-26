@@ -1,17 +1,19 @@
+// src/App.jsx
+
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import Header from './components/Header';
 
-// ✅ Lazy Loading para optimizar rendimiento
+// Lazy loading de páginas para mejorar performance
 const Home = lazy(() => import('./pages/Home'));
 const Consultas = lazy(() => import('./pages/Consultas'));
 const Programar = lazy(() => import('./pages/Programar'));
 const Reportar = lazy(() => import('./pages/Reportar'));
 const GestionCasos = lazy(() => import('./pages/GestionCasos'));
-const Facturacion = lazy(() => import('./pages/Facturacion')); // Importa Facturacion
-const NotFound = lazy(() => import('./pages/NotFound')); // Nueva página de error
+const Facturacion = lazy(() => import('./pages/Facturacion'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 function App() {
   return (
@@ -25,8 +27,8 @@ function App() {
           <Route path="/programar" element={<Programar />} />
           <Route path="/reportar" element={<Reportar />} />
           <Route path="/gestion-casos" element={<GestionCasos />} />
-          <Route path="/facturacion" element={<Facturacion />} /> {/* Nueva ruta para Facturación */}
-          <Route path="*" element={<NotFound />} /> {/* Ruta para errores 404 */}
+          <Route path="/facturacion" element={<Facturacion />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
       <Footer />
