@@ -1,177 +1,134 @@
-import API_BASE_URL from './main.jsx';
+// api.js
 
-// ✅ Expresión regular para validar emails
+import { API_BASE_URL } from './config'; // Ajusta la ruta según tu proyecto
+
+/**
+ * Expresión regular para validar correos electrónicos.
+ * @constant {RegExp}
+ */
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
- * Maneja la respuesta de la API.
- * Si la respuesta no es correcta (status HTTP no OK), intenta obtener el error en JSON.
- * De lo contrario, retorna el body convertido a JSON.
+ * Función genérica para realizar peticiones HTTP.
+ * Lanza error si el status no es 2xx.
+ *
+ * @param {string} endpoint - Ruta relativa de la API (p.ej. '/api/casos').
+ * @param {RequestInit} [options] - Opciones de fetch (método, headers, body, etc.).
+ * @returns {Promise<any>} - JSON decodificado de la respuesta.
+ * @throws {Error} - Si la respuesta HTTP falla o no se puede parsear JSON.
  */
-async function handleResponse(response) {
+async function request(endpoint, options = {}) {
+  const url = `${API_BASE_URL}${endpoint}`;
+  const response = await fetch(url, {
+    credentials: 'include', // incluye cookies si las usas
+    ...options,
+  });
+
+  let payload;
+  try {
+    payload = await response.json();
+  } catch (err) {
+    throw new Error(`Error al parsear JSON de ${url}: ${err.message}`);
+  }
+
   if (!response.ok) {
-    try {
-      const errorData = await response.json();
-      console.error("❌ Respuesta del backend:", errorData);
-      throw new Error(`❌ Error HTTP ${response.status}: ${JSON.stringify(errorData)}`);
-    } catch {
-      throw new Error(`❌ Error HTTP ${response.status}: Respuesta no válida`);
-    }
+    const msg = payload?.error || JSON.stringify(payload);
+    throw new Error(`HTTP ${response.status} - ${msg}`);
   }
-  return response.json();
+
+  return payload;
 }
 
 /**
- * Obtiene todos los casos desde el backend.
+ * Obtiene todos los casos.
+ *
+ * @returns {Promise<Array>} Lista de casos.
  */
-export async function obtenerCasos() {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/casos`, {
-      method: "GET",
-      headers: { "Accept": "application/json" },
-      cache: "no-store",
-    });
-    return await handleResponse(response);
-  } catch (error) {
-    console.error("❌ Error en obtenerCasos:", error);
-    return [];
-  }
+export function obtenerCasos() {
+  return request('/api/casos', {
+    method: 'GET',
+    headers: { 'Accept': 'application/json' },
+    cache: 'no-store',
+  });
 }
 
 /**
- * Crea un nuevo caso.
+ * Crea un nuevo caso en el backend.
  * Realiza validaciones de campos obligatorios y formato de email.
+ *
+ * @param {object} datos - Datos del caso.
+ * @param {string} datos.nombre - Nombre del evaluado.
+ * @param {string} datos.telefono - Teléfono de contacto.
+ * @param {string} datos.estado - Estado inicial del caso.
+ * @param {string} [datos.email] - Email (opcional).
+ * @returns {Promise<object>} Caso creado.
  */
-export async function crearCaso(datosCaso) {
-  try {
-    // Verificar campos obligatorios
-    const camposRequeridos = ["nombre", "telefono", "estado"];
-    for (const campo of camposRequeridos) {
-      if (!datosCaso[campo]) {
-        throw new Error(`❌ Falta el campo obligatorio: ${campo}`);
-      }
+export function crearCaso(datos) {
+  // Validaciones básicas
+  ['nombre', 'telefono', 'estado'].forEach(field => {
+    if (!datos[field]) {
+      throw new Error(`Falta el campo obligatorio: ${field}`);
     }
+  });
 
-    // Validar formato de email (si se proporciona)
-    if (datosCaso.email && !emailRegex.test(datosCaso.email)) {
-      throw new Error("❌ El correo electrónico ingresado no es válido.");
-    }
-
-    // Construir el objeto a enviar
-    const response = await fetch(`${API_BASE_URL}/api/casos`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        nombre: datosCaso.nombre,
-        documento: datosCaso.documento || "",
-        telefono: datosCaso.telefono,
-        email: datosCaso.email || "",
-        estado: datosCaso.estado,
-        tipo_visita: datosCaso.tipo_visita || "",
-        ciudad: datosCaso.ciudad || "",
-        direccion: datosCaso.direccion || "",
-        punto_referencia: datosCaso.punto_referencia || "",
-        fecha_visita: datosCaso.fecha_visita || "",
-        hora_visita: datosCaso.hora_visita || "",
-        intentos_contacto: datosCaso.intentos_contacto || 0,
-        motivo_no_programacion: datosCaso.motivo_no_programacion || "",
-        evaluador_email: datosCaso.evaluador_email || "",
-        evaluador_asignado: datosCaso.evaluador_asignado || "",
-        // Nuevos campos para el analista
-        analista_asignado: datosCaso.analista_asignado || "",
-        analista_email: datosCaso.analista_email || "",
-        analista_telefono: datosCaso.analista_telefono || "",
-        observaciones: datosCaso.observaciones || "",
-        barrio: datosCaso.barrio || "",
-        evaluador_telefono: datosCaso.evaluador_telefono || "",
-        programador: datosCaso.programador || "",
-        gastos_adicionales: datosCaso.gastos_adicionales || 0,
-        viaticos: datosCaso.viaticos || 0,
-      }),
-    });
-
-    return await handleResponse(response);
-  } catch (error) {
-    console.error("❌ Error en crearCaso:", error);
-    return null;
+  if (datos.email && !emailRegex.test(datos.email)) {
+    throw new Error('El correo electrónico ingresado no es válido.');
   }
+
+  return request('/api/casos', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(datos),
+  });
 }
 
 /**
  * Actualiza un caso existente.
  * Valida que se envíe el ID y el estado del caso.
+ *
+ * @param {string|number} id - ID del caso a actualizar.
+ * @param {object} datos - Campos a actualizar.
+ * @returns {Promise<object>} Caso actualizado.
  */
-export async function actualizarCaso(id, datos) {
-  try {
-    if (!id) throw new Error("❌ ID del caso no proporcionado.");
-    if (!datos.estado) throw new Error("❌ Estado del caso no proporcionado.");
+export function actualizarCaso(id, datos) {
+  if (!id) throw new Error('ID del caso no proporcionado.');
+  if (!datos.estado) throw new Error('Estado del caso no proporcionado.');
 
-    const response = await fetch(`${API_BASE_URL}/api/casos/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        evaluador_email: datos.evaluador_email || "",
-        estado: datos.estado,
-        tipo_visita: datos.tipo_visita || "",
-        ciudad: datos.ciudad || "",
-        direccion: datos.direccion || "",
-        punto_referencia: datos.punto_referencia || "",
-        fecha_visita: datos.fecha_visita || "",
-        hora_visita: datos.hora_visita || "",
-        intentos_contacto: datos.intentos_contacto || 0,
-        motivo_no_programacion: datos.motivo_no_programacion || "",
-        evaluador_asignado: datos.evaluador_asignado || "",
-        // Nuevos campos para el analista
-        analista_asignado: datos.analista_asignado || "",
-        analista_email: datos.analista_email || "",
-        analista_telefono: datos.analista_telefono || "",
-        observaciones: datos.observaciones || "",
-        barrio: datos.barrio || ""
-      }),
-    });
-
-    return await handleResponse(response);
-  } catch (error) {
-    console.error("❌ Error en actualizarCaso:", error);
-    return null;
-  }
+  return request(`/api/casos/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(datos),
+  });
 }
 
 /**
- * Sube un archivo de evidencia para un caso.
+ * Sube un archivo de evidencia asociado a un caso.
+ *
+ * @param {string|number} id - ID del caso.
+ * @param {File} archivo - Archivo de evidencia.
+ * @returns {Promise<object>} Respuesta con URL de evidencia.
  */
-export async function subirEvidencia(id, archivo) {
-  try {
-    if (!id) throw new Error("❌ ID del caso no proporcionado.");
-    if (!archivo) throw new Error("❌ Archivo de evidencia no proporcionado.");
+export function subirEvidencia(id, archivo) {
+  if (!id) throw new Error('ID del caso no proporcionado.');
+  if (!archivo) throw new Error('Archivo de evidencia no proporcionado.');
 
-    const formData = new FormData();
-    formData.append("archivo", archivo);
+  const form = new FormData();
+  form.append('archivo', archivo);
 
-    const response = await fetch(`${API_BASE_URL}/api/casos/${id}/evidencia`, {
-      method: "POST",
-      body: formData,
-    });
-
-    return await handleResponse(response);
-  } catch (error) {
-    console.error("❌ Error en subirEvidencia:", error);
-    return null;
-  }
+  return request(`/api/casos/${id}/evidencia`, {
+    method: 'POST',
+    body: form,
+  });
 }
 
 /**
- * Obtiene la URL del calendario desde la API.
+ * Obtiene la URL del calendario desde la configuración de API.
+ *
+ * @returns {Promise<{ calendar_url: string }>} Objeto con la URL.
  */
-export async function obtenerCalendarUrl() {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/settings/calendar_url`, {
-      method: "GET",
-      headers: { "Accept": "application/json" },
-    });
-    return await handleResponse(response);
-  } catch (error) {
-    console.error("❌ Error en obtenerCalendarUrl:", error);
-    return null;
-  }
+export function obtenerCalendarUrl() {
+  return request('/api/settings/calendar_url', {
+    method: 'GET',
+    headers: { 'Accept': 'application/json' },
+  });
 }
